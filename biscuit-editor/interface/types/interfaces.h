@@ -1,4 +1,7 @@
-#include <gtk/gtk.h>
+#ifndef EDITOR_INTERFACES_H
+#define EDITOR_INTERFACES_H
+
+#include <gtkmm.h>
 #include <memory>
 #include <vector>
 #include <string>
@@ -10,12 +13,14 @@ namespace editor {
     template<typename T>
     class Page {
     public:
-        std::shared_ptr<T> GetPage() {
-            return page;
-        }
+        T GetPage() { return page; }
     protected:
-        std::shared_ptr<T> page;
-        shared_vector(GtkWidget) widgets;
+        template <typename P>
+        std::shared_ptr<P> GetWidget(int index) { 
+            return std::dynamic_pointer_cast<P>(widgets[index]);
+        }
+        T page;
+        shared_vector(Gtk::Widget) widgets;
 
         template<typename T2>
         int MakeWidget();
@@ -25,3 +30,6 @@ namespace editor {
         int MakeEntry(std::string lab);
     };
 }
+
+#include "interfaces_impl.h"
+#endif // EDITOR_INTERFACES_H
