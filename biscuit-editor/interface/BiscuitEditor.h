@@ -1,5 +1,4 @@
-#include "interfaces.h"
-#include "types.h"
+#include "./types/types.h"
 #include <string>
 
 namespace editor {
@@ -9,7 +8,14 @@ namespace editor {
         ~BiscuitEditor() {};    
 
     private:
+        void SetDefaultPageLayout();    // default layout으로 페이지 꾸밈.
+        int MakeNewNotebook();
+        template<typename T>
+        int MakeNewComponent();
 
-    Gtk::Button button;
+        shared_vector(Gtk::Notebook) notebooks;
+        shared_vector(AComponent) components;
+        
+        Gtk::Button button;
     };
 }
