@@ -6,7 +6,7 @@ namespace editor {
     BiscuitEditor::BiscuitEditor() {
         // init app
         set_title("Biscuit Editor");
-        set_default_size(960, 720);
+        set_default_size(720, 960);
         add(page);
 
         // make layout
@@ -25,7 +25,6 @@ namespace editor {
 
         int hierarchyIndex = MakeNewComponent<Hierarchy>();
         components[hierarchyIndex]->RegistParent(notebooks[hirerchyNotebookIndex].get());
-        
     }
 
 

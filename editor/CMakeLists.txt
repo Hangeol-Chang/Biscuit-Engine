@@ -14,9 +14,9 @@ add_executable(BiscuitEditor main.cpp
 
 # 헤더 폴더 추가
 target_include_directories(BiscuitEditor 
-    PRIVATE ${CMAKE_SOURCE_DIR}/interface
-    PRIVATE ${CMAKE_SOURCE_DIR}/interface/components
-    PRIVATE ${CMAKE_SOURCE_DIR}/interface/types
+    PRIVATE ${CMAKE_SOURCE_DIR}/include
+    PRIVATE ${CMAKE_SOURCE_DIR}/include/components
+    PRIVATE ${CMAKE_SOURCE_DIR}/include/types
 )
 
 # 라이브러리 링크
