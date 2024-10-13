@@ -2,17 +2,23 @@
 #define VULKAN_HELPER_H
 
 #include <iostream>
+#include <vector>
 #include <vulkan/vulkan.h>
+#include "VulkanTypes.h"
 
 namespace gui {
-
     /*
         debugger function들은 class를 안만드는 대신
         debuging용 namespace를 만들어서 관리.
     */
    
+    // 어디까지 helper로 꺼내야 하는건지 경계가 모호해지고 있음. 잘 정리할 것.
     namespace helper {
-        bool IsDeviceSuitable(VkPhysicalDevice device);
+        bool IsDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface, const std::vector<const char*>& deviceExtensions);
+        QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface);
+        int RateDeviceSuitability(VkPhysicalDevice device);
+        bool CheckDeviceExtensionSupport(VkPhysicalDevice device, const std::vector<const char*>& deviceExtensions);
+        SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface);
     }
 
     namespace debugger {
@@ -28,6 +34,8 @@ namespace gui {
             std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
             return VK_FALSE;
         }
+
+        // debug class 있어야 할수도 ?
     }
 }
 

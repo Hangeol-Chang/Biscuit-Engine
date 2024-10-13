@@ -1,12 +1,22 @@
 #include <vector>
 #include <string>
 
+#ifdef WIN32
+#define VK_USE_PLATFORM_WIN32_KHR
+#define GLFW_EXPOSE_NATIVE_WIN32
+#else
+#define VK_USE_PLATFORM_XCB_KHR
+#define GLFW_EXPOSE_NATIVE_X11
+#endif
+
 #define GLFW_INCLUDE_VULKAN
 #include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>
 #include <glm./glm.hpp>
 
 #include "VulkanHelper.h"
+#include "VulkanTypes.h"
 
 namespace gui {
     typedef struct VulkanParameter_t {
@@ -38,10 +48,12 @@ namespace gui {
         void InitWindow();
         void InitVulkan();
         void CreateInstance();
+        void CreateSurface();
         void PickPhysicalDevice();
         void CreateLogicalDevice();
-        void CreateSurface();
         void CreateSwapChain();
+        void CreateImageViews();
+        void CreateGraphicsPipeline();
 
         void MainLoop();
         void CleanUp();
@@ -50,11 +62,24 @@ namespace gui {
         VkInstance instance;
         VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
         VkDevice device;
+        VkSurfaceKHR surface;
+        VkQueue graphicsQueue;
+        VkQueue presentQueue;
+        VkSwapchainKHR swapChain;
+        std::vector<VkImage> swapChainImages;
+        VkFormat swapChainImageFormat;
+        VkExtent2D swapChainExtent;
+        std::vector<VkImageView> swapChainImageViews;
 
 
-        // common vulkan functions
-        
+        const std::vector<const char*> deviceExtensions = {
+            VK_KHR_SWAPCHAIN_EXTENSION_NAME
+        };
 
+        /*-- setting apis --*/
+        VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+        VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+        VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 
         // 분리될 debug 관련 함수들.
         void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
