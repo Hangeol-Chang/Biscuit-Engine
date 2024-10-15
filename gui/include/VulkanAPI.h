@@ -53,6 +53,7 @@ namespace gui {
         void CreateLogicalDevice();
         void CreateSwapChain();
         void CreateImageViews();
+        void CreateRenderPass();
         void CreateGraphicsPipeline();
 
         void MainLoop();
@@ -70,7 +71,9 @@ namespace gui {
         VkFormat swapChainImageFormat;
         VkExtent2D swapChainExtent;
         std::vector<VkImageView> swapChainImageViews;
-
+        VkRenderPass renderPass;
+        VkPipelineLayout pipelineLayout;
+        VkPipeline graphicsPipeline;
 
         const std::vector<const char*> deviceExtensions = {
             VK_KHR_SWAPCHAIN_EXTENSION_NAME

@@ -19,6 +19,8 @@ namespace gui {
         int RateDeviceSuitability(VkPhysicalDevice device);
         bool CheckDeviceExtensionSupport(VkPhysicalDevice device, const std::vector<const char*>& deviceExtensions);
         SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface);
+        std::vector<char> ReadFile(const std::string& filename);
+        VkShaderModule CreateShaderModule(const std::vector<char>& code, VkDevice device);
     }
 
     namespace debugger {
