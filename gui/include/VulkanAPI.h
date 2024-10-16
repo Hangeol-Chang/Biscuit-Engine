@@ -55,6 +55,14 @@ namespace gui {
         void CreateImageViews();
         void CreateRenderPass();
         void CreateGraphicsPipeline();
+        void CreateFramebuffers();
+        void CreateCommandPool();
+        void CreateCommandBuffer();
+        void CreateSyncObjects();
+
+        // running logic
+        void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+        void DrawFrame();
 
         void MainLoop();
         void CleanUp();
@@ -74,6 +82,15 @@ namespace gui {
         VkRenderPass renderPass;
         VkPipelineLayout pipelineLayout;
         VkPipeline graphicsPipeline;
+        std::vector<VkFramebuffer> swapChainFramebuffers;
+        VkCommandPool commandPool;
+        VkCommandBuffer commandBuffer;
+
+        // imgeAvailableSemaphore는 ObjectPool화 할 것.
+        VkSemaphore imageAvailableSemaphore;
+        VkSemaphore renderFinishedSemaphore;
+        VkFence inFlightFence;
+
 
         const std::vector<const char*> deviceExtensions = {
             VK_KHR_SWAPCHAIN_EXTENSION_NAME
