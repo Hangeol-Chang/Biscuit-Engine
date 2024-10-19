@@ -594,9 +594,7 @@ namespace gui {
 
 
     void VulkanAPI::MainLoop() {
-        while (!glfwWindowShouldClose(window)) {
-            printf("main loop\n");
-            
+        while (!glfwWindowShouldClose(window)) {            
             glfwPollEvents();
             DrawFrame();
         }

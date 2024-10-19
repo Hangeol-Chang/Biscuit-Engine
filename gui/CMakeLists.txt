@@ -10,6 +10,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 find_package(Vulkan REQUIRED)
 find_package(glfw3 REQUIRED)
 
+add_subdirectory(../engine ${CMAKE_BINARY_DIR}/engine)
+
 add_executable(BiscuitGUI main.cpp
     src/BiscuitGUI.cpp
     src/VulkanAPI.cpp
@@ -25,7 +27,8 @@ target_include_directories(BiscuitGUI
 # 라이브러리 링크
 target_link_libraries(BiscuitGUI 
     ${Vulkan_LIBRARIES}
-    glfw    
+    glfw
+    BiscuitEngine
 )
 
 # copy shader files

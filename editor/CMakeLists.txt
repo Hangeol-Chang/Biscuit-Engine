@@ -9,6 +9,8 @@ pkg_check_modules(GTKMM REQUIRED gtkmm-3.0)
 
 include_directories(${GTKMM_INCLUDE_DIRS})
 
+add_subdirectory(../engine ${CMAKE_BINARY_DIR}/engine)
+
 # 실행 파일 추가
 add_executable(BiscuitEditor main.cpp    
     src/BiscuitEditor.cpp
@@ -23,7 +25,10 @@ target_include_directories(BiscuitEditor
 )
 
 # 라이브러리 링크
-target_link_libraries(BiscuitEditor ${GTKMM_LIBRARIES})
+target_link_libraries(BiscuitEditor 
+    ${GTKMM_LIBRARIES}
+    BiscuitEngine
+)
 target_compile_options(BiscuitEditor PRIVATE -std=c++17 ${GTKMM_CFLAGS_OTHER})
 
 # public file copy

@@ -1,6 +1,9 @@
 #include <gtkmm.h>
 #include "BiscuitEditor.h"
 
+// include 됨
+#include <BakeBehaviour.h>
+
 using namespace editor;
 
 int main(int argc, char *argv[]) {
