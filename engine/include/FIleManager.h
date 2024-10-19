@@ -1,1 +1,9 @@
-// json, xml 등의 파일을 읽어서 데이터화 하는 클래스.
+// input, output 처리하는 클래스.
+
+#include <json/json.h>
+
+namespace engine {
+    class FileManager {
+        
+    }
+}
