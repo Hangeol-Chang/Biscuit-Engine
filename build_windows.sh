@@ -25,6 +25,18 @@ EOF
 chmod +x $BUILD_DIR/Biscuit
 
 
+# copy/make public file/folder
+## shaders
+mkdir -p $BUILD_DIR/shaders
+cp -r ./gui/shaders/*.spv $BUILD_DIR/shaders
+
+## gui config datas
+cp -r ./engine/data $BUILD_DIR/data
+
+## mkae public files
+mkdir -p $BUILD_DIR/public
+
+
 echo "=============================================="
 echo "빌드 완료: 실행 파일은 $BUILD_DIR/Biscuit에 생성되었습니다."
 echo "=============================================="
