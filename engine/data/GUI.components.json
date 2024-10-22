@@ -3,10 +3,14 @@
         {
             "behaviour" : "ThrottleBehaviour",
             "name" : "Throttle_example1",
+            "parent" : "root",
+            "children" : ["TBT3dArrow_example2"],
+
             "model" : {
                 "mode" : "dynamic",
                 "position" : [0.0, 0.0, 0.0],
                 "rotation" : [0.0, 0.0, 0.0],
+                "scale" : [1.0, 1.0, 1.0],
                 "data" : {
                     "vertices" : [
                         [0.0, 0.0, 0.0],    [0.0, 0.0, 1.0],    [0.0, 1.0, 0.0],    
@@ -33,29 +37,34 @@
                 }
             },
             "vertesShader" : "vert.spv",
-            "fragmentShader" : "frag.spv"
-        },
+            "fragmentShader" : "frag.spv",
 
-        {
-            "behaviour" : "TBT3dArrowBehaviour",
-            "name" : "TBT3dArrow_example2",
-            "parent" : "Throttle_example1",
-            "model" : {
-                "mode" : "static",
-                "position" : [0.0, 0.0, 0.0],
-                "rotation" : [0.0, 0.0, 0.0],
-                "data" : {
-                    "modelFile" : "arrow.obj"
+            "childrenComponents" : [
+                {
+                    "behaviour" : "TBT3dArrowBehaviour",
+                    "name" : "TBT3dArrow_example2",
+                    "parent" : "Throttle_example1",
+                    "children" : [],
+        
+                    "model" : {
+                        "mode" : "static",
+                        "position" : [0.0, 0.0, 0.0],
+                        "rotation" : [0.0, 0.0, 0.0],
+                        "scale" : [1.0, 1.0, 1.0],
+                        "data" : {
+                            "modelFile" : "arrow.obj"
+                        }
+                    },
+                    "texture" : {
+                        "mode" : "image",
+                        "data" : {
+                            "path" : "arrow.png"
+                        }
+                    },
+                    "vertesShader" : "vert.spv",
+                    "fragmentShader" : "frag.spv"
                 }
-            },
-            "texture" : {
-                "mode" : "image",
-                "dta" : {
-                    "path" : "arrow.png"
-                }
-            },
-            "vertesShader" : "vert.spv",
-            "fragmentShader" : "frag.spv"
+            ]
         }
     ]
 }
