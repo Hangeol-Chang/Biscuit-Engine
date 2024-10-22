@@ -18,6 +18,9 @@
 #include "VulkanHelper.h"
 #include "VulkanTypes.h"
 
+const int MAX_FRAMES_IN_FLIGHT = 2;
+
+
 namespace gui {
     typedef struct VulkanParameter_t {
         std::string applicationName;
@@ -84,13 +87,13 @@ namespace gui {
         VkPipeline graphicsPipeline;
         std::vector<VkFramebuffer> swapChainFramebuffers;
         VkCommandPool commandPool;
-        VkCommandBuffer commandBuffer;
+        std::vector<VkCommandBuffer> commandBuffers;
 
         // imgeAvailableSemaphore는 ObjectPool화 할 것.
-        VkSemaphore imageAvailableSemaphore;
-        VkSemaphore renderFinishedSemaphore;
-        VkFence inFlightFence;
-
+        std::vector<VkSemaphore> imageAvailableSemaphores;
+        std::vector<VkSemaphore> renderFinishedSemaphores;
+        std::vector<VkFence> inFlightFences;
+        uint32_t currentFrame = 0;
 
         const std::vector<const char*> deviceExtensions = {
             VK_KHR_SWAPCHAIN_EXTENSION_NAME
