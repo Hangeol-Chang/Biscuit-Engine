@@ -29,7 +29,7 @@
             "texture" : {
                 "mode" : "color",
                 "data" : {
-                    "color" : [0.0, 0.0, 0.0, 1.0],
+                    "color" : [0.0, 0.0, 0.0, 1.0]
                 }
             },
             "vertesShader" : "vert.spv",
@@ -56,6 +56,6 @@
             },
             "vertesShader" : "vert.spv",
             "fragmentShader" : "frag.spv"
-        },
+        }
     ]
 }
