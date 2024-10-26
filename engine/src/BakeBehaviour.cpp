@@ -3,7 +3,7 @@
 
 namespace engine {
     // static variables init
-    std::map<size_t, BakeBehaviour*> BakeBehaviour::behaviours;
+    std::map<size_t, BakeBehaviour *> BakeBehaviour::behaviours;
 
     // static functions
     BakeBehaviour *BakeBehaviour::FindBehaviour(std::string *name) {

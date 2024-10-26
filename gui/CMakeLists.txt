@@ -15,7 +15,8 @@ add_subdirectory(../engine ${CMAKE_BINARY_DIR}/engine)
 add_executable(BiscuitGUI main.cpp
     src/BiscuitGUI.cpp
     src/VulkanAPI.cpp
-    src//VulkanHelper.cpp
+    src/VulkanHelper.cpp
+    src/BiscuitGUI.cpp
 )
 
 # 헤더 폴더 추가

@@ -2,11 +2,13 @@
 #include "../interface/BakeBehaviour.h"
 
 namespace engine {
-    BiscuitEngine::BiscuitEngine() {
-        
+    bool BiscuitEngine::Initialize() {
+        BuildComponents();
+        return true;
     }
-    BiscuitEngine::~BiscuitEngine() {
-        
+    void BiscuitEngine::BuildComponents() {
+        // root = std::make_shared<Component<ModelData_Dynamic, TextureData_Color>>();
+        printf("Build Components\n");
     }
 
     void BiscuitEngine::Tick() {

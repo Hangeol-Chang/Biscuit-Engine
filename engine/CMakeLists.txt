@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(BiscuitEngine)  # project name 다시 생각해볼 것.
 
-add_library(BiscuitEngine SHARED
+add_library(BiscuitEngine STATIC
     src/BiscuitEngine.cpp
     src/BakeBehaviour.cpp
 )

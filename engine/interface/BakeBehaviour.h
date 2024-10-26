@@ -9,10 +9,9 @@
 namespace engine {
     // 유니티의 MonoBehaviour와 비슷한 역할을 하는 클래스
     class BakeBehaviour {
-    protected:
+    public:
         BakeBehaviour() {};
         ~BakeBehaviour() {}
-    public:
         BakeBehaviour(std::string &name);
 
         virtual void Awake() {};
@@ -30,7 +29,7 @@ namespace engine {
     protected:
         // static하게 띄워서 
         static BakeBehaviour *FindBehaviour(std::string *name);
-        static std::map<size_t, BakeBehaviour*> behaviours; // hashcode, BakeBehaviour
+        static std::map<size_t, BakeBehaviour *> behaviours; // hashcode, BakeBehaviour
 
         std::vector<BakeBehaviour*> children;   // 
         BakeBehaviour *parent = nullptr;        // 최상의 오브젝트일경우 root 오브젝트를 받아야 함 (카메라 제외)

@@ -7,6 +7,8 @@
 #include <functional>
 #include <vector>
 
+#include "types.h"
+
 namespace engine {
     class BiscuitEngine {
     public:
@@ -25,11 +27,18 @@ namespace engine {
         template<typename T>
         void RegistComponent(T behaviour);
 
+        // parameter 필요한거 추가할 것.
+        bool Initialize();
+        // json data가 업데이트 되거나, 최초 BiscuitEngine 생성될 떄 호출해서,
+        // Compoenent를 만드는 함수.
+        void BuildComponents();
+
     private :
-        BiscuitEngine();
-        ~BiscuitEngine();
+        BiscuitEngine() = default;
+        ~BiscuitEngine() = default;
 
         std::vector<std::function<void()>> bakeUpdateFunctions;
+        std::shared_ptr<Component<ModelData_Dynamic, TextureData_Color>> root;
     };
 }
 

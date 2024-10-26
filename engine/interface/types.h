@@ -1,7 +1,6 @@
 #ifndef ENGINE_TYPES_H
 #define ENGINE_TYPES_H
 
-// namespace engine으로 한정하지 않음.
 // engine에서 사용될 types들
 #include <string>
 #include <vector>
@@ -12,6 +11,7 @@
 #include "BakeBehaviour.h"
 
 namespace engine {
+    class BakeBehaviour;
 
     ///////////////// about model /////////////////
     typedef struct ModelData_Dynamic {
@@ -34,7 +34,6 @@ namespace engine {
         glm::vec3 rotation;
         glm::vec3 scale;
         T data;
-
     };
 
     ///////////////// about texture /////////////////
@@ -69,7 +68,6 @@ namespace engine {
 
     protected:
         std::string behaviourName;
-        std::string parent;
         std::string name;
         std::shared_ptr<BakeBehaviour> behaviour;
         
