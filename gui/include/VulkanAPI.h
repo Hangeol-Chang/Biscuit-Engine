@@ -62,13 +62,17 @@ namespace gui {
         void CreateCommandPool();
         void CreateCommandBuffer();
         void CreateSyncObjects();
+        static void FramebufferResizeCallback(GLFWwindow* window, int width, int height);
+
+        void RecreateSwapChain();
 
         // running logic
         void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
         void DrawFrame();
 
         void MainLoop();
-        void CleanUp();
+        void Cleanup();
+        void CleanupSwapChain();
 
         GLFWwindow* window;
         VkInstance instance;
@@ -94,6 +98,7 @@ namespace gui {
         std::vector<VkSemaphore> renderFinishedSemaphores;
         std::vector<VkFence> inFlightFences;
         uint32_t currentFrame = 0;
+        bool framebufferResized = false;
 
         const std::vector<const char*> deviceExtensions = {
             VK_KHR_SWAPCHAIN_EXTENSION_NAME
