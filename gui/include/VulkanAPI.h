@@ -17,9 +17,9 @@
 
 #include "VulkanHelper.h"
 #include "VulkanTypes.h"
+#include "types.h"
 
 const int MAX_FRAMES_IN_FLIGHT = 2;
-
 
 namespace gui {
     typedef struct VulkanParameter_t {
@@ -60,6 +60,8 @@ namespace gui {
         void CreateGraphicsPipeline();
         void CreateFramebuffers();
         void CreateCommandPool();
+        void CreateVertexBuffer();
+        void CreateIndexBuffer();
         void CreateCommandBuffer();
         void CreateSyncObjects();
         static void FramebufferResizeCallback(GLFWwindow* window, int width, int height);
@@ -73,6 +75,10 @@ namespace gui {
         void MainLoop();
         void Cleanup();
         void CleanupSwapChain();
+
+        // common functions
+        void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+        void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
         GLFWwindow* window;
         VkInstance instance;
@@ -92,6 +98,10 @@ namespace gui {
         std::vector<VkFramebuffer> swapChainFramebuffers;
         VkCommandPool commandPool;
         std::vector<VkCommandBuffer> commandBuffers;
+        VkBuffer vertexBuffer;
+        VkDeviceMemory vertexBufferMemory;
+        VkBuffer indexBuffer;
+        VkDeviceMemory indexBufferMemory;
 
         // imgeAvailableSemaphore는 ObjectPool화 할 것.
         std::vector<VkSemaphore> imageAvailableSemaphores;
@@ -103,6 +113,18 @@ namespace gui {
         const std::vector<const char*> deviceExtensions = {
             VK_KHR_SWAPCHAIN_EXTENSION_NAME
         };
+
+        const std::vector<Vertex> vertices = {
+            {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+            {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+            {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
+            {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
+        };
+        const std::vector<uint16_t> indices = {
+            0, 1, 2, 2, 3, 0
+        };
+
+
 
         /*-- setting apis --*/
         VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);

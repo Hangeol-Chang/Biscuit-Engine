@@ -21,6 +21,7 @@ namespace gui {
         SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface);
         std::vector<char> ReadFile(const std::string& filename);
         VkShaderModule CreateShaderModule(const std::vector<char>& code, VkDevice device);
+        uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties, VkPhysicalDevice physicalDevice);
     }
 
     namespace debugger {
