@@ -1,8 +1,0 @@
-{
-    "application.windowWidth" : 800,
-    "application.windowHeight": 600,
-    "application.windowTitle" : "Biscuit Engine",
-    "application.presentMode" : "VK_PRESENT_MODE_MAILBOX_KHR",
-    "application.frameRate" : 60,
-    "application.framebufferCount" : 2
-}
