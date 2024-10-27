@@ -57,11 +57,15 @@ namespace gui {
         void CreateSwapChain();
         void CreateImageViews();
         void CreateRenderPass();
+        void CreateDescriptorSetLayout();
         void CreateGraphicsPipeline();
         void CreateFramebuffers();
         void CreateCommandPool();
         void CreateVertexBuffer();
         void CreateIndexBuffer();
+        void CreateUniformBuffers();
+        void CreateDescriptorPool();
+        void CreateDescriptorSets();
         void CreateCommandBuffer();
         void CreateSyncObjects();
         static void FramebufferResizeCallback(GLFWwindow* window, int width, int height);
@@ -71,6 +75,7 @@ namespace gui {
         // running logic
         void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
         void DrawFrame();
+        void UpdateUniformBuffer(uint32_t currentImage);
 
         void MainLoop();
         void Cleanup();
@@ -93,6 +98,7 @@ namespace gui {
         VkExtent2D swapChainExtent;
         std::vector<VkImageView> swapChainImageViews;
         VkRenderPass renderPass;
+        VkDescriptorSetLayout descriptorSetLayout;
         VkPipelineLayout pipelineLayout;
         VkPipeline graphicsPipeline;
         std::vector<VkFramebuffer> swapChainFramebuffers;
@@ -103,6 +109,12 @@ namespace gui {
         VkBuffer indexBuffer;
         VkDeviceMemory indexBufferMemory;
 
+        std::vector<VkBuffer> uniformBuffers;
+        std::vector<VkDeviceMemory> uniformBuffersMemory;
+        std::vector<void*> uniformBuffersMapped;
+        VkDescriptorPool descriptorPool;
+        std::vector<VkDescriptorSet> descriptorSets;
+        
         // imgeAvailableSemaphore는 ObjectPool화 할 것.
         std::vector<VkSemaphore> imageAvailableSemaphores;
         std::vector<VkSemaphore> renderFinishedSemaphores;
