@@ -22,6 +22,7 @@ add_executable(BiscuitGUI main.cpp
 # 헤더 폴더 추가
 target_include_directories(BiscuitGUI
     PRIVATE ${CMAKE_SOURCE_DIR}/include
+    PRIVATE ${CMAKE_SOURCE_DIR}/common
     PRIVATE ${Vulkan_INCLUDE_DIRS}
 )
 
