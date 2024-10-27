@@ -19,8 +19,10 @@ namespace gui {
                 SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(device, surface);
                 swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
             }
+            VkPhysicalDeviceFeatures supportedFeatures;
+            vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
 
-            return indices.IsComplete() && extensionsSupported && swapChainAdequate;
+            return indices.IsComplete() && extensionsSupported && swapChainAdequate && supportedFeatures.samplerAnisotropy;
         }
         QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface) {
             QueueFamilyIndices indices;

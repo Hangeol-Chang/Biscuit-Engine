@@ -36,3 +36,5 @@ target_link_libraries(BiscuitGUI
 # copy shader files
 configure_file(${CMAKE_SOURCE_DIR}/shaders/vert.spv ${CMAKE_BINARY_DIR}/shaders/vert.spv COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/shaders/frag.spv ${CMAKE_BINARY_DIR}/shaders/frag.spv COPYONLY)
+
+file(COPY ${CMAKE_SOURCE_DIR}/public DESTINATION ${CMAKE_BINARY_DIR})
