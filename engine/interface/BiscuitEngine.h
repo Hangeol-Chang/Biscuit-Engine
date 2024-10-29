@@ -17,7 +17,7 @@ namespace engine {
             return instance;
         }
         BiscuitEngine(BiscuitEngine const&) = delete;
-        void operator=(BiscuitEngine const&) = delete;
+        // void operator=(BiscuitEngine const&) = delete;
 
         // engine api
         void Tick();

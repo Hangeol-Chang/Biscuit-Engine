@@ -1,12 +1,12 @@
 #include <iostream>
-#include "./include/VulkanAPI.h"
+#include "./include/BiscuitGUI.h"
 
 using namespace gui;
 
 int main() {
-    printf("gui main\n");
+    printf("[GUI] start gui process\n");
 
-    VulkanAPI app;
+    gui::BiscuitGUI app;
     try {
         app.Run();
     } catch (const std::exception& e) {

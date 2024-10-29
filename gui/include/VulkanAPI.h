@@ -41,15 +41,13 @@ namespace gui {
         VulkanAPI();
         ~VulkanAPI() {};
 
-        // Parameter file 읽는 함수.
-        // engine에서 강제로 호출할 수도 있으며,
-        // 호출된 후에는 연관된 것들을 Update해주는 로직이 필요함. 
-        void ReadParameters(); 
-
-    private:
-        // initialize logic
+        // 외부에서 호출할 key 함수들.
         void InitWindow();
         void InitVulkan();
+        bool Tick();
+        void Cleanup();
+    private:
+        // initialize logic
         void CreateInstance();
         void CreateSurface();
         void PickPhysicalDevice();
@@ -83,7 +81,6 @@ namespace gui {
         void UpdateUniformBuffer(uint32_t currentImage);
 
         void MainLoop();
-        void Cleanup();
         void CleanupSwapChain();
 
         // common functions

@@ -822,8 +822,17 @@ namespace gui {
         }
     }
 
+    bool VulkanAPI::Tick() {
+        if(!glfwWindowShouldClose(window)) {
+            glfwPollEvents();
+            DrawFrame();
+            return true;
+        }
+        vkDeviceWaitIdle(device);
+        return false;
+    }
 
-    void VulkanAPI::MainLoop() {
+    void VulkanAPI::MainLoop() {    // legacy
         while (!glfwWindowShouldClose(window)) {            
             glfwPollEvents();
             DrawFrame();
@@ -906,7 +915,10 @@ namespace gui {
     }
 
     void VulkanAPI::Cleanup() {
-        printf("clean up\n");
+        printf("[GUI] clean up\n");
+        
+        vkDeviceWaitIdle(device);
+
         CleanupSwapChain();
 
         for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {

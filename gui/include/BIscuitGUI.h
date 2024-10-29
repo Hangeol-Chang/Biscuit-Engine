@@ -1,12 +1,9 @@
-
-// engine으로부터 파라미터를 읽어서,
-// 실제로 vulkan에 그리는 명령을 내리는 클래스.
-
 #ifndef BISCUIT_GUI_H
 #define BISCUIT_GUI_H
 
 #include <iostream>
 #include "./VulkanAPI.h"
+#include "BiscuitEngine.h"
 
 namespace gui {
     class BiscuitGUI {
@@ -16,8 +13,12 @@ namespace gui {
 
         VulkanAPI graphicsAPI;
 
-    private:
+        void Run();
 
+    private:
+        engine::BiscuitEngine& biscuitEngine = engine::BiscuitEngine::GetInstance();
+
+        uint32_t frameRate = 60;
     };
 }
 
