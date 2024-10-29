@@ -3,12 +3,15 @@
 
 namespace engine {
     bool BiscuitEngine::Initialize() {
+        fileManager = FileManager();
+
         BuildComponents();
         return true;
     }
     void BiscuitEngine::BuildComponents() {
         // root = std::make_shared<Component<ModelData_Dynamic, TextureData_Color>>();
-        printf("Build Components\n");
+        root = fileManager.ReadComponent("data/GUI.components.json");
+        printf("[ENGINE] Build Components\n");
     }
 
     void BiscuitEngine::Tick() {

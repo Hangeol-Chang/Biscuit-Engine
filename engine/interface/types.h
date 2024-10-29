@@ -8,8 +8,6 @@
 #include <map>
 #include <memory>
 
-#include "BakeBehaviour.h"
-
 namespace engine {
     class BakeBehaviour;
 

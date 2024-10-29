@@ -31,9 +31,11 @@ mkdir -p $BUILD_DIR/shaders
 cp -r ./gui/shaders/*.spv $BUILD_DIR/shaders
 
 ## gui config datas
+mkdir -p $BUILD_DIR/data
 cp -r ./engine/data/* $BUILD_DIR/data
 
 ## mkae public files
+mkdir -p $BUILD_DIR/public
 cp -r ./editor/public/* $BUILD_DIR/public
 cp -r ./gui/public/* $BUILD_DIR/public
 

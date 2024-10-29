@@ -7,9 +7,14 @@
 #include <functional>
 #include <vector>
 
+#include "../include/FileManager.h"
 #include "types.h"
 
 namespace engine {
+
+    // template <typename MM, typename TM>
+    // class Component;    
+
     class BiscuitEngine {
     public:
         static BiscuitEngine& GetInstance() {
@@ -36,6 +41,8 @@ namespace engine {
     private :
         BiscuitEngine() = default;
         ~BiscuitEngine() = default;
+
+        FileManager fileManager;
 
         std::vector<std::function<void()>> bakeUpdateFunctions;
         std::shared_ptr<Component<ModelData_Dynamic, TextureData_Color>> root;
