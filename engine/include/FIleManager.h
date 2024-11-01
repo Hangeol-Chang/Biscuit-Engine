@@ -4,14 +4,20 @@
 #include <json/json.h>
 #include <iostream>
 #include <memory>
-#include "types.h"
+#include "engineTypes.h"
 
 namespace engine {
-    // forward declaration
-    struct ModelData_Dynamic;
-    struct TextureData_Color;
-    template <typename MM, typename TM>
-    class Component;
+    
+    // 일단 파일매니저 안에 만들지만, 스케일이 커지면 분리해야 할 수도 있음.
+    class ComponentParser {
+    public:
+        ComponentParser();
+        ~ComponentParser();
+        std::shared_ptr<Component> LoadComponents(Json::Value& root);
+
+    private:
+        std::shared_ptr<Component> ParseComponent(const Json::Value& compJson);
+    };
 
     class FileManager {
     public:
@@ -22,11 +28,12 @@ namespace engine {
         void WriteJsonFile(const std::string& fileName);
     
         // read Components
-        std::shared_ptr<Component<ModelData_Dynamic, TextureData_Color>> ReadComponent(const std::string& fileName);
-        
+        std::shared_ptr<Component> ReadComponent(const std::string& fileName);
     private:
+        ComponentParser parser;
 
     };
+
 }
 
 #endif // FILEMANAGER_H

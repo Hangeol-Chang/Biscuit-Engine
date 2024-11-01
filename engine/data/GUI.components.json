@@ -36,9 +36,10 @@
                     "color" : [0.0, 0.0, 0.0, 1.0]
                 }
             },
-            "vertesShader" : "vert.spv",
-            "fragmentShader" : "frag.spv",
-
+            "shader" : {
+                "vertex" : "vert.spv",
+                "fragment" : "frag.spv"
+            },
             "childrenComponents" : [
                 {
                     "behaviour" : "TBT3dArrowBehaviour",
@@ -61,8 +62,10 @@
                             "path" : "arrow.png"
                         }
                     },
-                    "vertesShader" : "vert.spv",
-                    "fragmentShader" : "frag.spv"
+                    "shader" : {
+                        "vertex" : "vert.spv",
+                        "fragment" : "frag.spv"
+                    }
                 }
             ]
         }

@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "../include/FileManager.h"
-#include "types.h"
+#include "engineTypes.h"
 
 namespace engine {
 
@@ -45,7 +45,7 @@ namespace engine {
         FileManager fileManager;
 
         std::vector<std::function<void()>> bakeUpdateFunctions;
-        std::shared_ptr<Component<ModelData_Dynamic, TextureData_Color>> root;
+        std::shared_ptr<Component> root;
     };
 }
 
