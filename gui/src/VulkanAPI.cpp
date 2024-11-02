@@ -19,21 +19,15 @@
 namespace gui {
     VulkanAPI::VulkanAPI() {
     }
-
-    void VulkanAPI::Run() {
-        // initialize glfw
-        InitWindow();
-        // initizliae vulkan
-        InitVulkan();
-
-        MainLoop();
-        Cleanup();
-    }
-    void VulkanAPI::InitWindow() {
+    void VulkanAPI::InitWindow(std::pair<int, int> windowSize, bool resizeable, std::string title) {
         glfwInit();
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE); // parameter화 할 것.
-        window = glfwCreateWindow(800, 600, "Biscuit", nullptr, nullptr);
+        glfwWindowHint(GLFW_RESIZABLE, resizeable); // parameter화 할 것.
+        window = glfwCreateWindow(
+            windowSize.first, windowSize.second,
+            title.c_str(), 
+            nullptr, nullptr
+        );
         
         glfwSetWindowUserPointer(window, this);
         glfwSetFramebufferSizeCallback(window, FramebufferResizeCallback);

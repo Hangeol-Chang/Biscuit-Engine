@@ -143,6 +143,28 @@ namespace engine {
 
         std::string name;
     };
+
+
+    // application Parameter
+    typedef struct ApplicationParameter {
+    public:
+        std::string title;
+        std::pair<int, int> windowSize;
+        bool fullScreen;
+
+        bool vulkanValidation;
+        bool vulkanDebug;
+
+        void Print() const {
+            printf("== Application Parameter ==\n");
+            printf("Title: %s\n", title.c_str());
+            printf("Window Size: (%d, %d)\n", windowSize.first, windowSize.second);
+            printf("Full Screen: %s\n", fullScreen ? "true" : "false");
+            printf("Vulkan Validation: %s\n", vulkanValidation ? "true" : "false");
+            printf("Vulkan Debug: %s\n", vulkanDebug ? "true" : "false");
+            printf("===========================\n");
+        }
+    } AppParameter;
 }
 
 #endif //ENGINE_TYPES_H

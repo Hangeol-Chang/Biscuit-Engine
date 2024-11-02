@@ -1,13 +1,12 @@
 {
     "application" : {
         "title" : "Example GUI",
-        "width" : 800,
-        "height" : 600,
+        "width" : 720,
+        "height" : 360,
         "fullscreen" : false
     },
     "vulkan" : {
         "validation" : false,
         "debug" : false
-        
     }
 }

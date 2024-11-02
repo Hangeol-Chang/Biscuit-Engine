@@ -7,6 +7,7 @@ add_library(BiscuitEngine STATIC
     src/BiscuitEngine.cpp
     src/BakeBehaviour.cpp
     src/FileManager.cpp
+    src/EngineDebugger.cpp
 )
 
 # 외부에 공개될 api

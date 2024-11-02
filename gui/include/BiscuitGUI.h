@@ -4,6 +4,7 @@
 #include <iostream>
 #include "./VulkanAPI.h"
 #include "BiscuitEngine.h"
+#include "engineTypes.h"
 
 namespace gui {
     class BiscuitGUI {
@@ -17,6 +18,7 @@ namespace gui {
 
     private:
         engine::BiscuitEngine& biscuitEngine = engine::BiscuitEngine::GetInstance();
+        engine::AppParameter appParameter;
 
         uint32_t frameRate = 60;
     };

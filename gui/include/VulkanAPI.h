@@ -36,13 +36,11 @@ namespace gui {
 
     class VulkanAPI {
     public:
-        void Run();
-
         VulkanAPI();
         ~VulkanAPI() {};
 
         // 외부에서 호출할 key 함수들.
-        void InitWindow();
+        void InitWindow(std::pair<int, int> windowSize, bool resizeable, std::string title);
         void InitVulkan();
         bool Tick();
         void Cleanup();

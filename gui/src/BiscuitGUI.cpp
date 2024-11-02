@@ -6,6 +6,8 @@
 namespace gui {
     BiscuitGUI::BiscuitGUI() {
         printf("[GUI] Application constructor\n");
+        appParameter = biscuitEngine.BuildAppParameter();
+
         biscuitEngine.Initialize();
     }
     BiscuitGUI::~BiscuitGUI() {
@@ -13,16 +15,19 @@ namespace gui {
     }
     
     void BiscuitGUI::Run() {
-        // Biscuit engine tick
-
         gui::VulkanAPI api;
         try {
-            api.InitWindow();
+            api.InitWindow(
+                appParameter.windowSize,
+                false,
+                appParameter.title
+            );
             api.InitVulkan();
 
             while(true) {
                 auto startFrame = std::chrono::steady_clock::now();
 
+                biscuitEngine.Tick();
                 if(!api.Tick()) { break; };
 
                 auto endFrame = std::chrono::steady_clock::now();

@@ -12,9 +12,6 @@
 
 namespace engine {
 
-    // template <typename MM, typename TM>
-    // class Component;    
-
     class BiscuitEngine {
     public:
         static BiscuitEngine& GetInstance() {
@@ -22,7 +19,6 @@ namespace engine {
             return instance;
         }
         BiscuitEngine(BiscuitEngine const&) = delete;
-        // void operator=(BiscuitEngine const&) = delete;
 
         // engine api
         void Tick();
@@ -37,6 +33,7 @@ namespace engine {
         // json data가 업데이트 되거나, 최초 BiscuitEngine 생성될 떄 호출해서,
         // Compoenent를 만드는 함수.
         void BuildComponents();
+        AppParameter BuildAppParameter();
 
     private :
         BiscuitEngine() = default;
@@ -45,7 +42,7 @@ namespace engine {
         FileManager fileManager;
 
         std::vector<std::function<void()>> bakeUpdateFunctions;
-        std::shared_ptr<Component> root;
+        std::shared_ptr<Component> rootComponent;
     };
 }
 

@@ -13,7 +13,8 @@ namespace engine {
     public:
         ComponentParser();
         ~ComponentParser();
-        std::shared_ptr<Component> LoadComponents(Json::Value& root);
+        std::shared_ptr<Component>  LoadComponents(Json::Value& root);
+        AppParameter                LoadAppParameter(Json::Value& root);
 
     private:
         std::shared_ptr<Component> ParseComponent(const Json::Value& compJson);
@@ -25,6 +26,8 @@ namespace engine {
         ~FileManager();
 
         Json::Value ReadJsonFile(const std::string& fileName);
+        AppParameter ReadAppParameter(const std::string& fileName);
+
         void WriteJsonFile(const std::string& fileName);
     
         // read Components

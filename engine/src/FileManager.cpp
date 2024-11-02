@@ -25,15 +25,23 @@ namespace engine {
         printf("[DEBUG] read component\n");
         auto component = parser.LoadComponents(root);
 
-        printf("-- loaded Component info --\n");
+        printf("---------- loaded Component info ----------\n");
         component->Print();
-        printf("---------------------------\n");
+        printf("-------------------------------------------\n");
 
         // 여기서 해체하면 됨.
         // component->Deserialize(root);
         return nullptr;
     }
 
+    AppParameter FileManager::ReadAppParameter(const std::string& fileName) {
+        Json::Value root = ReadJsonFile(fileName);
+        printf("[DEBUG] read app parameter\n");
+        auto appParameter = parser.LoadAppParameter(root);
+
+        appParameter.Print();
+        return appParameter;
+    }
 
     // component parser
     ComponentParser::ComponentParser() {}
@@ -66,6 +74,20 @@ namespace engine {
         }
 
         return rootComponent;
+    }
+    AppParameter ComponentParser::LoadAppParameter(Json::Value& root) {
+        AppParameter appParameter = AppParameter();
+
+        appParameter.title = root["application"]["title"].asString();
+        appParameter.windowSize = std::make_pair(
+            root["application"]["width"].asUInt(),
+            root["application"]["height"].asUInt()
+        );
+        appParameter.fullScreen = root["application"]["fullScreen"].asBool();
+        appParameter.vulkanValidation = root["vulkan"]["validation"].asBool();
+        appParameter.vulkanDebug = root["vulkan"]["debug"].asBool();
+
+        return appParameter;
     }
 
     std::shared_ptr<Component> ComponentParser::ParseComponent(const Json::Value& componentData) {
