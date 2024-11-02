@@ -5,6 +5,10 @@ BUILD_DIR="build"
 mkdir -p $BUILD_DIR/editor
 mkdir -p $BUILD_DIR/gui
 
+# UserScript Include 설정
+PY_PATH="./engine/behaviour/header/"
+python "$PY_PATH/headerMaker.py" "$PY_PATH"
+
 # 각 프로젝트 빌드
 # Editor 빌드
 cmake -B $BUILD_DIR/editor -S ./editor -G "Unix Makefiles"
@@ -31,10 +35,13 @@ mkdir -p $BUILD_DIR/shaders
 cp -r ./gui/shaders/*.spv $BUILD_DIR/shaders
 
 ## gui config datas
-cp -r ./engine/data $BUILD_DIR/data
+mkdir -p $BUILD_DIR/data
+cp -r ./engine/data/* $BUILD_DIR/data
 
 ## mkae public files
 mkdir -p $BUILD_DIR/public
+cp -r ./editor/public/* $BUILD_DIR/public
+cp -r ./gui/public/* $BUILD_DIR/public
 
 
 echo "=============================================="

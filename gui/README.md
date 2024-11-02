@@ -37,6 +37,12 @@ engine에서 transform 데이터를 받아서 vertex를 수정.
 ---> 근데 이렇게 할려면, MM, TM을 Behaviour가 알고있어야함.
 ---> Update로직을 어떤 식으로 호출할 것인가.
 -> Component가 Behaviour안에 들어가는게 맞는 형태임.
+-> UpdateMmodel을 걸면, Dynamic|Static을 Behaciour가 알고있다가, 적당히 처리해줘야함.
+--> 안됨. 안됨 Component가 Behaviour안에 들어가게 할 수 없음.
+--> Behaviour는 딱 동작에 대한 것만 가지고 있어야 함.
+-> 그러면 어떻게 Component를 Update해주지?
+--> 일단 BuildComponent할 때, Behaviour 생성하고, Behaviour에 Component를 포인터로 주입해줄 것.
+--> Update는 그 이후에 생각.
 
 ### Dependencies
 - c++ >= 17

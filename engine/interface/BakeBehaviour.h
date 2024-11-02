@@ -25,7 +25,7 @@
                 });                                                             \
             }                                                                   \
         };                                                                      \
-        static DerivedClass##Registration registration_instance;                \
+        static DerivedClass##Registration DerivedClass##instance;               \
     }
 
 namespace engine {

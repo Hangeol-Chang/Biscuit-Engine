@@ -29,12 +29,15 @@ namespace engine {
     }
     std::shared_ptr<BakeBehaviour> BakeBehaviour::CreateInstance(const std::string& name) {
         auto it = GetRegistry().find(name);
+        printf("size of registry %d\n", GetRegistry().size());
 
         if (it != GetRegistry().end()) { 
+            printf("find behaviour %s\n", name.c_str());
             auto instance = it->second();
             behaviours.insert({hashStr(name), instance});
             return instance; 
         }
+        printf("not found behaviour %s\n", name.c_str());
         return nullptr;
     }
 

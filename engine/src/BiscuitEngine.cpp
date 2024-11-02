@@ -2,6 +2,7 @@
 #include "../interface/BakeBehaviour.h"
 
 #include "../include/EngineDebugger.h"
+#include "../behaviour/header/UserBehaviours.h"
 
 namespace engine {
     bool BiscuitEngine::Initialize() {
@@ -18,6 +19,8 @@ namespace engine {
 
         // module test
         auto debugger = BakeBehaviour::CreateInstance("EngineDebugger");
+        auto aa = BakeBehaviour::CreateInstance("ThrottleBehaviour");
+
         BakeBehaviour::RegistUpdates();
     }
     AppParameter BiscuitEngine::BuildAppParameter() {

@@ -1,6 +1,6 @@
 #ifdef NONE_INCLUDE
 
-#include "../interface/BakeBehaviour.h"
+#include "BakeBehaviour.h"
 
 namespace engine {
     class ExampleBehaviour : public BakeBehaviour {

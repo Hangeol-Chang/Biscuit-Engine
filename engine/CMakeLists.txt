@@ -3,17 +3,23 @@ project(BiscuitEngine)  # project name 다시 생각해볼 것.
 
 find_package(jsoncpp 1.8 REQUIRED)
 
+file(GLOB_RECURSE USER_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/behaviour/*.cpp")
+
 add_library(BiscuitEngine STATIC
     src/BiscuitEngine.cpp
     src/BakeBehaviour.cpp
     src/FileManager.cpp
     src/EngineDebugger.cpp
+    src/GUIBuilder.cpp
+
+    ${USER_SOURCE}  # behaviour Scripts
 )
 
 # 외부에 공개될 api
 target_include_directories(BiscuitEngine PUBLIC 
     ${CMAKE_CURRENT_SOURCE_DIR}/interface
     ${CMAKE_CURRENT_SOURCE_DIR}/common
+    ${CMAKE_CURRENT_SOURCE_DIR}/behaviour/header
 )
 
 target_include_directories(BiscuitEngine PRIVATE 

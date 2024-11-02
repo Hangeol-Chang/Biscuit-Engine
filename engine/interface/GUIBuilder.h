@@ -1,14 +1,8 @@
-/*
-    editor 쪽에서는 변경사항을 json, xml로 저장하고,
-    gui 쪽으로는 정제된 데이터를 보내주는 역할.
-    
-    이거 지금 ComponentParser가 하고있는데, 여기에 병합해야 함.
-
-*/
 #ifndef GUI_BUILDER_H
 #define GUI_BUILDER_H
 
-#include "types.h"
+#include <json/json.h>
+#include "engineTypes.h"
 
 namespace engine {
     class GUIBuilder {
@@ -16,11 +10,11 @@ namespace engine {
         GUIBuilder();
         ~GUIBuilder();
 
-        bool BuildGUI();
-        
+        std::shared_ptr<Component>  LoadComponents(Json::Value& root);
+        AppParameter                LoadAppParameter(Json::Value& root);
 
     private:
-
+        std::shared_ptr<Component> ParseComponent(const Json::Value& compJson);
     };
 }
 
