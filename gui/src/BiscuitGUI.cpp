@@ -33,7 +33,7 @@ namespace gui {
                 auto endFrame = std::chrono::steady_clock::now();
                 auto frameDuration = std::chrono::duration_cast<std::chrono::milliseconds>(endFrame - startFrame);
 
-                if(frameDuration.count() < 1000 / frameRate) {
+                if(frameDuration.count() < 1000 / frameRate) {  // 이렇게 쓰면 프레임 밀림. 보간 필요.
                     std::this_thread::sleep_for(std::chrono::milliseconds(1000 / frameRate - frameDuration.count()));
                 }
             }

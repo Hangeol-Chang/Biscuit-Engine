@@ -14,18 +14,18 @@
             // printf("[%s] constructor\n", name.c_str()); }            \
 
 // Macro to register derived classes
-#define REGISTER_BEHAVIOUR(DerivedClass)                            \
-    namespace {                                                     \
-        struct DerivedClass##Registration {                         \
-            DerivedClass##Registration() {                          \
-                BakeBehaviour::RegistBehaviour(#DerivedClass, {     \
-                    []() -> std::shared_ptr<BakeBehaviour> {        \
-                        return std::make_shared<DerivedClass>(#DerivedClass);  \
-                    }                                               \
-                });                                                 \
-            }                                                       \
-        };                                                          \
-        static DerivedClass##Registration registration_instance;    \
+#define REGISTER_BEHAVIOUR(DerivedClass)                                        \
+    namespace {                                                                 \
+        struct DerivedClass##Registration {                                     \
+            DerivedClass##Registration() {                                      \
+                BakeBehaviour::RegistBehaviour(#DerivedClass, {                 \
+                    []() -> std::shared_ptr<BakeBehaviour> {                    \
+                        return std::make_shared<DerivedClass>(#DerivedClass);   \
+                    }                                                           \
+                });                                                             \
+            }                                                                   \
+        };                                                                      \
+        static DerivedClass##Registration registration_instance;                \
     }
 
 namespace engine {

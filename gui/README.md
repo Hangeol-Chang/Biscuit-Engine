@@ -29,6 +29,14 @@ engine에서 transform 데이터를 받아서 vertex를 수정.
 3d 모델 임포트
 프레임버퍼 파일로 뽑을 수 있는 기능.
 
+- Behaviour에서, Component를 어떻게 업데이트 해줘야함?
+-- 일단, 뭘 업데이트 할 수 있어야함/>?
+-- Model, Texture, Position, Rotation 싹 다
+-- Behaviour 안에 Component가 들어가는게 깔끔해 보인다...
+-- 아니면 Behaviour한테 Component를 주입해주고, Component의 Update로직을 뭔가가 바뀔 때 마다 호출.
+---> 근데 이렇게 할려면, MM, TM을 Behaviour가 알고있어야함.
+---> Update로직을 어떤 식으로 호출할 것인가.
+-> Component가 Behaviour안에 들어가는게 맞는 형태임.
 
 ### Dependencies
 - c++ >= 17
