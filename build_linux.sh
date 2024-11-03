@@ -7,7 +7,7 @@ mkdir -p $BUILD_DIR/gui
 
 # UserScript Include 설정
 PY_PATH="./engine/behaviour/header/"
-python "$PY_PATH/headerMaker.py" "$PY_PATH"
+python3 "$PY_PATH/headerMaker.py" "$PY_PATH"
 
 # 각 프로젝트 빌드
 # Editor 빌드

@@ -32,20 +32,21 @@ namespace engine {
         std::vector<uint32_t> indices;
         std::vector<glm::vec2> uvs;
 
-
         void Print() const override {
             IModel::Print();
-            printf("Vertices: [");
-            for (const auto& vertex : vertices) {
-                printf("(%.3f, %.3f, %.3f) ", vertex.x, vertex.y, vertex.z);
+            printf("Vertices: [\n");
+            int i = 0;
+            for(const auto& vertex : vertices) {
+                printf("\t%d : (%.3f, %.3f, %.3f) \n", i++, vertex.x, vertex.y, vertex.z);
             }
-            printf("]\nIndices: [");
-            for (const auto& index : indices) {
-                printf("%u ", index);
+            printf("]\nIndices: [\n");
+            for(size_t i = 0; i < indices.size(); i += 3) {
+                printf("\t%zu : %u %u %u \n", i, indices[i], indices[i+1], indices[i+2]);
             }
-            printf("]\nUVs: [");
-            for (const auto& uv : uvs) {
-                printf("(%.3f, %.3f) ", uv.x, uv.y);
+            printf("]\nUVs: [\n");
+            int i = 0;
+            for(const auto& uv : uvs) {
+                printf("\t%d : (%.3f, %.3f) \n", i++, uv.x, uv.y);
             }
             printf("]\n");
         }
@@ -72,6 +73,7 @@ namespace engine {
         }
     } TextureData_Color;
 
+    // image 파일 링크만 들어오는게 아니라, vulkan에서 사용할 수 있도록 메모리를 가르키고 있어야함.
     typedef struct TextureData_Image : public ITexture {
         std::string imageFile;
         void Print() const override {
@@ -91,7 +93,7 @@ namespace engine {
     };
     
     ///////////////// Component /////////////////
-    class Component {
+    class Component : public std::enable_shared_from_this<Component> {
     public:
         Component(std::string name) : name(name) {}
         Component() = default;
@@ -111,22 +113,20 @@ namespace engine {
         std::shared_ptr<ITexture>   GetTexture() { return texture; }
         std::shared_ptr<Shader>     GetShader() { return shader; }
 
+        std::shared_ptr<IModel>     model;
+        std::shared_ptr<ITexture>   texture;
+        std::shared_ptr<Shader>     shader;
+
+        std::string name;
+
         void Print(int depth = 0) const {
             std::string indent(depth * 2, ' ');
             printf("%sComponent Name: %s\n", indent.c_str(), name.c_str());
             printf("%sBehaviour Name: %s\n", indent.c_str(), behaviourName.c_str());
             printf("%sModel: -\n", indent.c_str());
-            if(model->mode == "dynamic") {
-                std::static_pointer_cast<ModelData_Dynamic>(model)->Print();
-            } else if(model->mode == "static") {
-                std::static_pointer_cast<ModelData_Dynamic>(model)->Print();
-            }
+            model->Print();
             printf("%sTexture: -\n", indent.c_str());
-            if(texture->mode == "color") {
-                std::static_pointer_cast<TextureData_Color>(texture)->Print();
-            } else if(texture->mode == "image") {
-                std::static_pointer_cast<TextureData_Image>(texture)->Print();
-            }
+            texture->Print();
             printf("%sShader: -\n", indent.c_str());
             shader->Print();
 
@@ -137,11 +137,7 @@ namespace engine {
             }
         }
     private:
-        std::shared_ptr<IModel>     model;
-        std::shared_ptr<ITexture>   texture;
-        std::shared_ptr<Shader>     shader;
 
-        std::string name;
     };
 
 

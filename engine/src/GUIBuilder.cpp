@@ -53,6 +53,7 @@ namespace engine {
         auto component = std::make_shared<Component>(componentData["name"].asString());
         component->behaviourName = componentData["behaviour"].asString();
         component->behaviour = BakeBehaviour::CreateInstance(component->behaviourName);
+        component->behaviour->SetComponent(component);
         printf("Component name: %s, Behaviour: %s\n", component->GetName().c_str(), component->behaviourName.c_str());
 
         // 모델 설정

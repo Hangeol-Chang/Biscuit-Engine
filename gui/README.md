@@ -44,6 +44,8 @@ engine에서 transform 데이터를 받아서 vertex를 수정.
 --> 일단 BuildComponent할 때, Behaviour 생성하고, Behaviour에 Component를 포인터로 주입해줄 것.
 --> Update는 그 이후에 생각.
 
+--> Component의 Model, Texture 등을 전부 public으로 오픈하고, Behaviour에서 직접 제어하도록 함.
+
 ### Dependencies
 - c++ >= 17
 - vulkan

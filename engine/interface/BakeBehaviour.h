@@ -48,6 +48,9 @@ namespace engine {
         void Rotation();    // parameter 받을거 생각해볼 것.
         void Scale();       // parameter 받을거 생각해볼 것.
 
+        void SetComponent(std::shared_ptr<Component> c) { component = c; }
+
+        // static global functions
         // 어떤 behaviour들이 있는지 저장해두는 곳.
         static std::map<std::string, std::function<std::shared_ptr<BakeBehaviour>()>>& GetRegistry();
         static void RegistBehaviour(const std::string& name, std::function<std::shared_ptr<BakeBehaviour>()> creator);
@@ -58,11 +61,32 @@ namespace engine {
     protected:
         static std::shared_ptr<BakeBehaviour> FindBehaviour(std::string *name);
         static std::map<size_t, std::shared_ptr<BakeBehaviour>> behaviours; // hashcode, BakeBehaviour
+        std::shared_ptr<Component> component;
 
         std::vector<std::shared_ptr<BakeBehaviour>> children;   // 
         BakeBehaviour *parent = nullptr;        // 최상의 오브젝트일경우 root 오브젝트를 받아야 함 (카메라 제외)
 
         bool useUpdate = true;
+
+        /*
+            model을 업데이트 하는 코드들을 전부 여기에 넣어두고,
+            필요한 놈이 호출하도록 함.
+            이 함수들은 무조건 성능 우선으로 제작되어야 함. vertex같은거 사이즈 커지면 로드 커질 수 있음.
+        */
+        // Model Static
+        void UpdateModel(std::shared_ptr<IModel> model, const std::string& modelFile);
+
+        // Model Dynamic
+        void UpdateVertices(std::shared_ptr<IModel> model, const std::vector<glm::vec3>& newVertices);
+        void UpdateIndices(std::shared_ptr<IModel> model, const std::vector<uint32_t>& newIndices);
+        void UpdateUVs(std::shared_ptr<IModel> model, const std::vector<glm::vec2>& newUVs);
+
+        // Texture Color
+        void UpdateColor(std::shared_ptr<ITexture> texture, const glm::vec3& color);
+        
+        // Texture Image
+        void UpdateImage(std::shared_ptr<ITexture> texture, const std::string& imageFile);
+        
     private:
     };
 }
