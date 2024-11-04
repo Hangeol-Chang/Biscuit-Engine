@@ -46,6 +46,8 @@ engine에서 transform 데이터를 받아서 vertex를 수정.
 
 --> Component의 Model, Texture 등을 전부 public으로 오픈하고, Behaviour에서 직접 제어하도록 함.
 
+-> Behaviour가 없는 정적 컴포넌트도 있을 수 있음.
+
 ### Dependencies
 - c++ >= 17
 - vulkan

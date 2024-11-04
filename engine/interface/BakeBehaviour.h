@@ -73,19 +73,27 @@ namespace engine {
             필요한 놈이 호출하도록 함.
             이 함수들은 무조건 성능 우선으로 제작되어야 함. vertex같은거 사이즈 커지면 로드 커질 수 있음.
         */
+        // Transform
+        void Translate(const glm::vec3& translation);   // translation 값만큼 이동.
+        void SetTransform(const glm::vec3& transform);  // transform 값으로 변경.
+        void Rotate(const glm::vec3& rotation);         // rotation 값만큼 회전.
+        void SetRotation(const glm::vec3& rotation);    // rotation 값으로 회전.
+        void Scale(const glm::vec3& scale);             // scale 값만큼 변경.
+        void SetScale(const glm::vec3& scale);          // scale 값으로 변경.
+
         // Model Static
-        void UpdateModel(std::shared_ptr<IModel> model, const std::string& modelFile);
+        void Update3DModel(const std::string& modelFile);
 
         // Model Dynamic
-        void UpdateVertices(std::shared_ptr<IModel> model, const std::vector<glm::vec3>& newVertices);
-        void UpdateIndices(std::shared_ptr<IModel> model, const std::vector<uint32_t>& newIndices);
-        void UpdateUVs(std::shared_ptr<IModel> model, const std::vector<glm::vec2>& newUVs);
+        void UpdateVertices(const std::vector<glm::vec3>& newVertices);
+        void UpdateIndices(const std::vector<uint32_t>& newIndices);
+        void UpdateUVs(const std::vector<glm::vec2>& newUVs);
 
         // Texture Color
-        void UpdateColor(std::shared_ptr<ITexture> texture, const glm::vec3& color);
+        void UpdateColor(const glm::vec3& color);
         
         // Texture Image
-        void UpdateImage(std::shared_ptr<ITexture> texture, const std::string& imageFile);
+        void UpdateImage(const std::string& imageFile);
         
     private:
     };
