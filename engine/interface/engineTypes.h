@@ -44,7 +44,7 @@ namespace engine {
                 printf("\t%zu : %u %u %u \n", i, indices[i], indices[i+1], indices[i+2]);
             }
             printf("]\nUVs: [\n");
-            int i = 0;
+            i = 0;
             for(const auto& uv : uvs) {
                 printf("\t%d : (%.3f, %.3f) \n", i++, uv.x, uv.y);
             }
@@ -140,16 +140,16 @@ namespace engine {
 
     };
 
-
     // application Parameter
     typedef struct ApplicationParameter {
     public:
         std::string title;
-        std::pair<int, int> windowSize;
+        std::pair<uint32_t, uint32_t> windowSize;
         bool fullScreen;
 
         bool vulkanValidation;
         bool vulkanDebug;
+        bool resizeable;
 
         void Print() const {
             printf("== Application Parameter ==\n");
@@ -158,6 +158,7 @@ namespace engine {
             printf("Full Screen: %s\n", fullScreen ? "true" : "false");
             printf("Vulkan Validation: %s\n", vulkanValidation ? "true" : "false");
             printf("Vulkan Debug: %s\n", vulkanDebug ? "true" : "false");
+            printf("Resizeable: %s\n", resizeable ? "true" : "false");
             printf("===========================\n");
         }
     } AppParameter;

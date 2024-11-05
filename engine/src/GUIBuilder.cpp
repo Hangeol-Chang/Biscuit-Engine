@@ -44,6 +44,8 @@ namespace engine {
         appParameter.fullScreen = root["application"]["fullScreen"].asBool();
         appParameter.vulkanValidation = root["vulkan"]["validation"].asBool();
         appParameter.vulkanDebug = root["vulkan"]["debug"].asBool();
+        
+        appParameter.resizeable = root["application"]["resizeable"].asBool();
 
         return appParameter;
     }

@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <vulkan/vulkan.h>
-#include "VulkanTypes.h"
+#include "guiTypes.h"
 
 namespace gui {
     /*

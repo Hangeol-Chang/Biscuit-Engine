@@ -17,11 +17,9 @@ namespace gui {
     void BiscuitGUI::Run() {
         gui::VulkanAPI api;
         try {
-            api.InitWindow(
-                appParameter.windowSize,
-                false,
-                appParameter.title
-            );
+            api.SetGUIParameter(appParameter);
+
+            api.InitWindow();
             api.InitVulkan();
 
             while(true) {

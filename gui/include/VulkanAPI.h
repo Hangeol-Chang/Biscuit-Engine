@@ -16,35 +16,30 @@
 #include <glm/glm.hpp>
 
 #include "VulkanHelper.h"
-#include "VulkanTypes.h"
-#include "types.h"
+#include "guiTypes.h"
+#include "engineTypes.h"
+
 
 const int MAX_FRAMES_IN_FLIGHT = 2;
 
 namespace gui {
-    typedef struct VulkanParameter_t {
-        std::string applicationName;
-        std::string engineName;
-        uint32_t applicationVersion;
-        uint32_t engineVersion;
-        uint32_t apiVersion;
-        uint32_t windowWidth;
-        uint32_t windowHeight;
-        bool resizable;
-
-    } VulkanParameter;
 
     class VulkanAPI {
     public:
         VulkanAPI();
         ~VulkanAPI() {};
 
+        // Setting apis
+        void SetGUIParameter(engine::AppParameter parameter);
+
         // 외부에서 호출할 key 함수들.
-        void InitWindow(std::pair<int, int> windowSize, bool resizeable, std::string title);
+        void InitWindow();
         void InitVulkan();
         bool Tick();
         void Cleanup();
+        
     private:
+
         // initialize logic
         void CreateInstance();
         void CreateSurface();
@@ -111,8 +106,10 @@ namespace gui {
         std::vector<VkFramebuffer> swapChainFramebuffers;
         VkCommandPool commandPool;
         std::vector<VkCommandBuffer> commandBuffers;
+
         VkBuffer vertexBuffer;
         VkDeviceMemory vertexBufferMemory;
+        
         VkBuffer indexBuffer;
         VkDeviceMemory indexBufferMemory;
 
@@ -148,6 +145,8 @@ namespace gui {
         };
 
 
+        // custom variables
+        engine::AppParameter appParameter;
 
         /*-- setting apis --*/
         VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);

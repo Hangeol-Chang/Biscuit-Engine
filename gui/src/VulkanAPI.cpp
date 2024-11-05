@@ -19,13 +19,13 @@
 namespace gui {
     VulkanAPI::VulkanAPI() {
     }
-    void VulkanAPI::InitWindow(std::pair<int, int> windowSize, bool resizeable, std::string title) {
+    void VulkanAPI::InitWindow() {
         glfwInit();
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-        glfwWindowHint(GLFW_RESIZABLE, resizeable); // parameter화 할 것.
+        glfwWindowHint(GLFW_RESIZABLE, appParameter.resizeable); // parameter화 할 것.
         window = glfwCreateWindow(
-            windowSize.first, windowSize.second,
-            title.c_str(), 
+            appParameter.windowSize.first, appParameter.windowSize.second,
+            appParameter.title.c_str(), 
             nullptr, nullptr
         );
         
@@ -35,6 +35,21 @@ namespace gui {
     void VulkanAPI::FramebufferResizeCallback(GLFWwindow* window, int width, int height) {
         auto app = reinterpret_cast<VulkanAPI*>(glfwGetWindowUserPointer(window));
         app->framebufferResized = true;
+    }
+    
+    void VulkanAPI::SetGUIParameter(engine::AppParameter parameter) {
+        appParameter = parameter;
+
+        appParameter.Print();
+
+        // guiParameter.applicationName = parameter.applicationName;
+        // guiParameter.engineName = parameter.engineName;
+        // guiParameter.applicationVersion = parameter.applicationVersion;
+        // guiParameter.engineVersion = parameter.engineVersion;
+        // guiParameter.apiVersion = parameter.apiVersion;
+        // guiParameter.windowWidth = parameter.windowWidth;
+        // guiParameter.windowHeight = parameter.windowHeight;
+        // guiParameter.resizable = parameter.resizable;
     }
 
     void VulkanAPI::InitVulkan() {

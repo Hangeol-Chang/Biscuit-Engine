@@ -1,12 +1,36 @@
 #ifndef GUI_TYPES_H
 #define GUI_TYPES_H
 
+#include <vector>
+#include <optional>
+#include <vulkan/vulkan.h>
 #include <array>
 #include <glm/glm.hpp>
-#include <vulkan/vulkan.h>
-
+#include <unordered_map>
+#include <queue>
 
 namespace gui {
+    struct Buffer { // index, vertex에 사용
+        VkBuffer buffer;
+        VkDeviceMemory memory;
+    };
+    struct Mesh {
+        Buffer vertexBuffer;
+        Buffer indexBuffer;
+        uint32_t indexCount;
+    };
+
+    class BufferPool {
+    public:
+        Buffer GetBuffer(uint32_t bufferId);
+        uint32_t AddBuffer(Buffer buffer);
+        bool RemoveBuffer(uint32_t bufferId);
+
+    private:
+        std::unordered_map<uint32_t, Buffer> buffers;
+    };
+
+
     struct Vertex {
         glm::vec2 pos;
         glm::vec3 color;
@@ -49,7 +73,21 @@ namespace gui {
         glm::mat4 proj;
     };
 
-    
+
+    typedef struct QueueFamilyIndices_ {
+        std::optional<uint32_t> graphicsFamily;
+        std::optional<uint32_t> presentFamily;
+
+        bool IsComplete() {
+            return graphicsFamily.has_value() && presentFamily.has_value();
+        }
+    } QueueFamilyIndices;
+
+    typedef struct SwapChainSupportDetails_ {
+        VkSurfaceCapabilitiesKHR capabilities;
+        std::vector<VkSurfaceFormatKHR> formats;
+        std::vector<VkPresentModeKHR> presentModes;
+    } SwapChainSupportDetails;
 }
 
-#endif // GUI_TYPES_H
+#endif // VULKAN_TYPES_H
