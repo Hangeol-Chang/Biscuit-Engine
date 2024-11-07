@@ -10,7 +10,8 @@
 #include <queue>
 
 namespace gui {
-    struct Buffer { // index, vertex에 사용
+    // vertex, index 등 버퍼에 사용
+    struct Buffer {
         VkBuffer buffer;
         VkDeviceMemory memory;
     };
@@ -20,14 +21,42 @@ namespace gui {
         uint32_t indexCount;
     };
 
-    class BufferPool {
+    class MeshPool {
     public:
-        Buffer GetBuffer(uint32_t bufferId);
-        uint32_t AddBuffer(Buffer buffer);
-        bool RemoveBuffer(uint32_t bufferId);
+        Buffer GetMesh(uint32_t bufferId) {
+            auto it = meshs.find(bufferId);
+            if (it != meshs.end()) {
+                return it->second.vertexBuffer;
+            } else {
+                throw std::runtime_error("Mesh not found");
+            }
+        }
+        uint32_t AddMesh(const Mesh& mesh) {
+            uint32_t newId = nextMeshId++;
+            meshs[newId] = mesh;
+            return newId;
+        }
+        bool RemoveMesh(uint32_t bufferId){
+            auto it = meshs.find(bufferId);
+            if (it != meshs.end()) {
+                // Free memory and destroy buffers if necessary
+                DestroyBuffer(it->second.vertexBuffer);
+                DestroyBuffer(it->second.indexBuffer);
+                meshs.erase(it);
+                return true;
+            }
+            return false;
+            }
 
     private:
-        std::unordered_map<uint32_t, Buffer> buffers;
+        std::unordered_map<uint32_t, Mesh> meshs;
+        uint32_t nextMeshId = 0;
+
+        // Helper function to destroy a buffer
+        void DestroyBuffer(Buffer& buffer) {
+            vkDestroyBuffer(device, buffer.buffer, nullptr);
+            vkFreeMemory(device, buffer.memory, nullptr);
+        }
     };
 
 
