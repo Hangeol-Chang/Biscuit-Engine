@@ -36,12 +36,12 @@ namespace gui {
             meshs[newId] = mesh;
             return newId;
         }
-        bool RemoveMesh(uint32_t bufferId){
+        bool RemoveMesh(VkDevice device, uint32_t bufferId){
             auto it = meshs.find(bufferId);
             if (it != meshs.end()) {
                 // Free memory and destroy buffers if necessary
-                DestroyBuffer(it->second.vertexBuffer);
-                DestroyBuffer(it->second.indexBuffer);
+                DestroyBuffer(device, it->second.vertexBuffer);
+                DestroyBuffer(device, it->second.indexBuffer);
                 meshs.erase(it);
                 return true;
             }
@@ -53,7 +53,7 @@ namespace gui {
         uint32_t nextMeshId = 0;
 
         // Helper function to destroy a buffer
-        void DestroyBuffer(Buffer& buffer) {
+        void DestroyBuffer(VkDevice device, Buffer& buffer) {
             vkDestroyBuffer(device, buffer.buffer, nullptr);
             vkFreeMemory(device, buffer.memory, nullptr);
         }
