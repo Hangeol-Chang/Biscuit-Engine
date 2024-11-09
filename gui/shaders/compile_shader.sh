@@ -5,8 +5,8 @@ VERTEX_SHADER="shader.vert"
 FRAGMENT_SHADER="shader.frag"
 
 # 출력 경로 (SPIR-V 바이너리)
-VERTEX_SHADER_OUTPUT="shader.vert.spv"
-FRAGMENT_SHADER_OUTPUT="shader.frag.spv"
+VERTEX_SHADER_OUTPUT="vert.spv"
+FRAGMENT_SHADER_OUTPUT="frag.spv"
 
 # glslangValidator를 사용하여 셰이더 파일을 컴파일
 glslangValidator -V $VERTEX_SHADER -o $VERTEX_SHADER_OUTPUT

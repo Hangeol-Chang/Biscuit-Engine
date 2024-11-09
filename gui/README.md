@@ -48,6 +48,9 @@ engine에서 transform 데이터를 받아서 vertex를 수정.
 
 -> Behaviour가 없는 정적 컴포넌트도 있을 수 있음.
 
+-> UV랑 vertex랑 buffer 분리해야 함.
+--> 갓갓gpt왈 : 분리 안하고 그냥 메모리에 묶어놓는게 그릴 떄 리소스 덜든다.
+
 ### Dependencies
 - c++ >= 17
 - vulkan

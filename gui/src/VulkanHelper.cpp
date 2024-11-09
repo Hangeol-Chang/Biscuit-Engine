@@ -138,7 +138,35 @@ namespace gui {
             }
 
             throw std::runtime_error("failed to find suitable memory type!");
+        }        
+        void printBufferData(VkDevice device, Buffer buffer) {
+
+            // 먼저, 메모리를 맵핑하여 CPU에서 읽을 수 있도록 합니다.
+            void* data;
+            VkResult result = vkMapMemory(device, buffer.memory, 0, VK_WHOLE_SIZE, 0, &data);
+            if (result != VK_SUCCESS) {
+                std::cerr << "Failed to map buffer memory!" << std::endl;
+                return;
+            }
+            VkMemoryRequirements memoryRequirements;
+            vkGetBufferMemoryRequirements(device, buffer.buffer, &memoryRequirements);
+            
+            // 버퍼의 데이터를 읽어서 출력합니다.
+            // 예를 들어, 버퍼에 float 데이터가 있다고 가정:
+            float* bufferData = static_cast<float*>(data);
+            printf("Buffer size : %d || Buffer Data ▽ %d", memoryRequirements.size);
+
+            for (size_t i = 0; i < memoryRequirements.size / sizeof(float); ++i) {
+                if(i % 3 == 0) printf("\n%d : ", i);
+                printf("%.3f ", bufferData[i]);
+            }
+
+            std::cout << std::endl;
+
+            // 메모리 맵핑을 해제합니다.
+            vkUnmapMemory(device, buffer.memory);
         }
+
     }
 
     namespace debugger {

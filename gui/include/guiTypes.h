@@ -46,7 +46,7 @@ namespace gui {
                 return true;
             }
             return false;
-            }
+        }
 
     private:
         std::unordered_map<uint32_t, Mesh> meshs;
@@ -60,12 +60,43 @@ namespace gui {
     };
 
 
+    class TexturePool {
+    public:
+        VkImageView GetTexture(uint32_t textureId) {
+            auto it = textures.find(textureId);
+            if (it != textures.end()) {
+                return it->second;
+            } else {
+                throw std::runtime_error("Texture not found");
+            }
+        }
+        uint32_t AddTexture(VkImageView texture) {
+            uint32_t newId = nextTextureId++;
+            textures[newId] = texture;
+            return newId;
+        }
+        bool RemoveTexture(VkDevice device, uint32_t textureId){
+            auto it = textures.find(textureId);
+            if (it != textures.end()) {
+                vkDestroyImageView(device, it->second, nullptr);
+                textures.erase(it);
+                return true;
+            }
+            return false;
+        }
+    private:
+        std::unordered_map<uint32_t, VkImageView> textures;
+        uint32_t nextTextureId = 0;
+    };
+
+    // 3d Model에 대한 Pool도 추가해야함.
+    // 근데 텍스쳐 안쓰고 color쓰면 어뜨캄/.?
+
     struct Vertex {
         glm::vec3 pos;
         glm::vec2 texCoord; // 나중에 이거 struct 따로 분리해야 함.
 
         Vertex(glm::vec3 pos, glm::vec2 texCoord) : pos(pos), texCoord(texCoord) {}
-
 
         static VkVertexInputBindingDescription getBindingDescription() {
             VkVertexInputBindingDescription bindingDescription{};
@@ -109,6 +140,42 @@ namespace gui {
 
         */
     };
+
+    // struct Vertex2 {
+    //     glm::vec2 pos;
+    //     glm::vec3 color;
+    //     glm::vec2 texCoord; // 나중에 이거 struct 따로 분리해야 함.
+
+    //     static VkVertexInputBindingDescription getBindingDescription() {
+    //         VkVertexInputBindingDescription bindingDescription{};
+    //         bindingDescription.binding = 0;
+    //         bindingDescription.stride = sizeof(Vertex2);
+    //         bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+    //         return bindingDescription;
+    //     }
+
+    //     static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions() {
+    //         std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
+
+    //         attributeDescriptions[0].binding = 0;
+    //         attributeDescriptions[0].location = 0;
+    //         attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
+    //         attributeDescriptions[0].offset = offsetof(Vertex2, pos);
+
+    //         attributeDescriptions[1].binding = 0;
+    //         attributeDescriptions[1].location = 1;
+    //         attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+    //         attributeDescriptions[1].offset = offsetof(Vertex2, color);
+
+    //         attributeDescriptions[2].binding = 0;
+    //         attributeDescriptions[2].location = 2;
+    //         attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
+    //         attributeDescriptions[2].offset = offsetof(Vertex2, texCoord);
+
+    //         return attributeDescriptions;
+    //     }
+    // };
 
     struct UniformBufferObject {
         glm::mat4 model;

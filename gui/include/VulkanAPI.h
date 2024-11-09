@@ -39,14 +39,15 @@ namespace gui {
         void Cleanup();
 
         // 외부에서 호출할 setting 함수들.
-        // glm::vec3 pos, glm::vec2 uv를 인수로 받아야함.
         uint32_t CreateMesh(std::vector<glm::vec3> vertices, std::vector<uint16_t> indices, std::vector<glm::vec2> uvs);
-        
-    private:
+        void UpdateMeshVertices(uint32_t meshId, std::vector<glm::vec3> vertices);
+        void UpdateMeshIndices(uint32_t meshId, std::vector<uint32_t> indices);
+        void UpdateMeshUVs(uint32_t meshId, std::vector<glm::vec2> uvs);
 
-        // 내부 호출 setting 함수들.
-        template <typename T>
-        Buffer CreateBuffer(std::vector<T> data);
+    private:
+        // 내부 호출용 setting 함수들
+        template<typename T>
+        Buffer CreateBuffer(std::vector<T> rawData); 
 
         // initialize logic
         void CreateInstance();
@@ -65,8 +66,6 @@ namespace gui {
         void CreateTextureImageView();
         void CreateTextureSampler();
 
-        void CreateVertexBuffer();
-        void CreateIndexBuffer();
         void CreateUniformBuffers();
         void CreateDescriptorPool();
         void CreateDescriptorSets();
@@ -132,23 +131,12 @@ namespace gui {
         uint32_t currentFrame = 0;
         bool framebufferResized = false;
 
-        const std::vector<const char*> deviceExtensions = {
-            VK_KHR_SWAPCHAIN_EXTENSION_NAME
-        };
-
         MeshPool meshPool;
         uint32_t testMesh;
 
-        const std::vector<Vertex> vertices = {
-            {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f}},
-            {{0.5f, -0.5f, 0.0f},  {0.0f, 0.0f}},
-            {{0.5f, 0.5f, 0.0f}, {0.0f, 1.0f}},
-            {{-0.5f, 0.5f, 0.0f},  {1.0f, 1.0f}}
+        const std::vector<const char*> deviceExtensions = {
+            VK_KHR_SWAPCHAIN_EXTENSION_NAME
         };
-        const std::vector<uint16_t> indices = {
-            0, 1, 2, 2, 3, 0
-        };
-
 
         // custom variables
         engine::AppParameter appParameter;

@@ -30,7 +30,7 @@ namespace engine {
     typedef struct ModelData_Dynamic : public IModel {
         // json으로부터 읽는 데이터.
         std::vector<glm::vec3> vertices;
-        std::vector<uint32_t> indices;
+        std::vector<uint16_t> indices;
         std::vector<glm::vec2> uvs;
         // gui가 주는 데이터.
         uint32_t meshId;

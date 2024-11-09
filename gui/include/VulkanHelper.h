@@ -22,6 +22,7 @@ namespace gui {
         std::vector<char> ReadFile(const std::string& filename);
         VkShaderModule CreateShaderModule(const std::vector<char>& code, VkDevice device);
         uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties, VkPhysicalDevice physicalDevice);
+        void printBufferData(VkDevice device, Buffer buffer);
     }
 
     namespace debugger {
