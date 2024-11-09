@@ -23,10 +23,10 @@ namespace gui {
 
     class MeshPool {
     public:
-        Buffer GetMesh(uint32_t bufferId) {
+        Mesh *GetMesh(uint32_t bufferId) {
             auto it = meshs.find(bufferId);
             if (it != meshs.end()) {
-                return it->second.vertexBuffer;
+                return &it->second;
             } else {
                 throw std::runtime_error("Mesh not found");
             }
@@ -61,9 +61,11 @@ namespace gui {
 
 
     struct Vertex {
-        glm::vec2 pos;
-        glm::vec3 color;
+        glm::vec3 pos;
         glm::vec2 texCoord; // 나중에 이거 struct 따로 분리해야 함.
+
+        Vertex(glm::vec3 pos, glm::vec2 texCoord) : pos(pos), texCoord(texCoord) {}
+
 
         static VkVertexInputBindingDescription getBindingDescription() {
             VkVertexInputBindingDescription bindingDescription{};
@@ -74,26 +76,38 @@ namespace gui {
             return bindingDescription;
         }
 
-        static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions() {
-            std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
+        static std::array<VkVertexInputAttributeDescription, 2> getAttributeDescriptions() {
+            std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
 
             attributeDescriptions[0].binding = 0;
             attributeDescriptions[0].location = 0;
-            attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
+            attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
             attributeDescriptions[0].offset = offsetof(Vertex, pos);
 
             attributeDescriptions[1].binding = 0;
             attributeDescriptions[1].location = 1;
-            attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-            attributeDescriptions[1].offset = offsetof(Vertex, color);
-
-            attributeDescriptions[2].binding = 0;
-            attributeDescriptions[2].location = 2;
-            attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
-            attributeDescriptions[2].offset = offsetof(Vertex, texCoord);
+            attributeDescriptions[1].format = VK_FORMAT_R32G32_SFLOAT;
+            attributeDescriptions[1].offset = offsetof(Vertex, texCoord);
 
             return attributeDescriptions;
         }
+
+        /*
+        pos만 동적 업데이트 하는 법에 대해서.
+        // 1. VertexBuffer 메모리를 맵핑
+        void* data;
+        vkMapMemory(device, vertexBufferMemory, 0, bufferSize, 0, &data);
+
+        // 2. pos만 업데이트
+        Vertex* vertexData = reinterpret_cast<Vertex*>(data);
+        for (uint32_t i = 0; i < vertexCount; ++i) {
+            vertexData[i].pos = newPos[i];  // newPos는 업데이트할 glm::vec3 배열
+        }
+
+        // 3. 메모리 언맵
+        vkUnmapMemory(device, vertexBufferMemory);
+
+        */
     };
 
     struct UniformBufferObject {

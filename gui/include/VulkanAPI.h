@@ -37,8 +37,16 @@ namespace gui {
         void InitVulkan();
         bool Tick();
         void Cleanup();
+
+        // 외부에서 호출할 setting 함수들.
+        // glm::vec3 pos, glm::vec2 uv를 인수로 받아야함.
+        uint32_t CreateMesh(std::vector<glm::vec3> vertices, std::vector<uint16_t> indices, std::vector<glm::vec2> uvs);
         
     private:
+
+        // 내부 호출 setting 함수들.
+        template <typename T>
+        Buffer CreateBuffer(std::vector<T> data);
 
         // initialize logic
         void CreateInstance();
@@ -107,12 +115,6 @@ namespace gui {
         VkCommandPool commandPool;
         std::vector<VkCommandBuffer> commandBuffers;
 
-        VkBuffer vertexBuffer;
-        VkDeviceMemory vertexBufferMemory;
-        
-        VkBuffer indexBuffer;
-        VkDeviceMemory indexBufferMemory;
-
         std::vector<VkBuffer> uniformBuffers;
         std::vector<VkDeviceMemory> uniformBuffersMemory;
         std::vector<void*> uniformBuffersMapped;
@@ -134,11 +136,14 @@ namespace gui {
             VK_KHR_SWAPCHAIN_EXTENSION_NAME
         };
 
+        MeshPool meshPool;
+        uint32_t testMesh;
+
         const std::vector<Vertex> vertices = {
-            {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
-            {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
-            {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
-            {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}}
+            {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f}},
+            {{0.5f, -0.5f, 0.0f},  {0.0f, 0.0f}},
+            {{0.5f, 0.5f, 0.0f}, {0.0f, 1.0f}},
+            {{-0.5f, 0.5f, 0.0f},  {1.0f, 1.0f}}
         };
         const std::vector<uint16_t> indices = {
             0, 1, 2, 2, 3, 0

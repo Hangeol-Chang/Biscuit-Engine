@@ -70,8 +70,28 @@ namespace gui {
         CreateTextureImageView();
         CreateTextureSampler();
 
-        CreateVertexBuffer();
-        CreateIndexBuffer();
+        const std::vector<glm::vec3> vertices = {
+            {-0.5f, -0.5f, 0.0f},
+            { 0.5f, -0.5f, 0.0f}, 
+            { 0.5f,  0.5f, 0.0f}, 
+            {-0.5f,  0.5f, 0.0f}
+        };
+        const std::vector<glm::vec2> uvs = {
+            {0.0f, 0.0f},
+            {1.0f, 0.0f},
+            {1.0f, 1.0f},
+            {0.0f, 1.0f}
+        };
+        const std::vector<uint16_t> indices = {
+            0, 1, 2, 2, 3, 0
+        };
+
+
+        testMesh = CreateMesh(vertices, indices, uvs);
+
+        // CreateVertexBuffer();
+        // CreateIndexBuffer();
+
         CreateUniformBuffers();
         CreateDescriptorPool();
         CreateDescriptorSets();
@@ -611,41 +631,85 @@ namespace gui {
             throw std::runtime_error("failed to create texture sampler!");
         }
     }
-    void VulkanAPI::CreateVertexBuffer() {
-        VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
+    uint32_t VulkanAPI::CreateMesh(std::vector<glm::vec3> vertices, std::vector<uint16_t> indices, std::vector<glm::vec2> uvs) {
+        // vertex 조립.
+        std::vector<Vertex> vertexData;
+        for (size_t i = 0; i < vertices.size(); i++) {
+            Vertex vertex(vertices[i], uvs[i]);
+            vertexData.push_back(vertex);
+        }
+
+        Mesh mesh;
+        mesh.vertexBuffer = CreateBuffer(vertexData);
+        mesh.indexBuffer  = CreateBuffer(indices);
+
+        return meshPool.AddMesh(mesh);
+    }
+    
+    template<typename T>
+    Buffer VulkanAPI::CreateBuffer(std::vector<T> data) {
+        VkDeviceSize bufferSize = sizeof(data[0]) * data.size();
 
         VkBuffer stagingBuffer;
         VkDeviceMemory stagingBufferMemory;
         CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
-        void* data;
-        vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
-            memcpy(data, vertices.data(), (size_t) bufferSize);
+        void* mappedData;
+        vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &mappedData);
+        memcpy(mappedData, data.data(), static_cast<size_t>(bufferSize));
         vkUnmapMemory(device, stagingBufferMemory);
 
-        CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
-        CopyBuffer(stagingBuffer, vertexBuffer, bufferSize);
+        Buffer buffer;
+
+        CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, buffer.buffer, buffer.memory);
+        CopyBuffer(stagingBuffer, buffer.buffer, bufferSize);
 
         vkDestroyBuffer(device, stagingBuffer, nullptr);
         vkFreeMemory(device, stagingBufferMemory, nullptr);
+
+        return buffer;
+    }
+
+
+    void VulkanAPI::CreateVertexBuffer() {
+        // VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
+
+        // VkBuffer stagingBuffer;
+        // VkDeviceMemory stagingBufferMemory;
+        // CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+
+        // void* data;
+        // vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
+        //     memcpy(data, vertices.data(), (size_t) bufferSize);
+        // vkUnmapMemory(device, stagingBufferMemory);
+
+        // Mesh *mesh = meshPool.GetMesh(testMesh);
+
+        // CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, mesh->vertexBuffer.buffer, mesh->vertexBuffer.memory);
+        // CopyBuffer(stagingBuffer, mesh->vertexBuffer.buffer, bufferSize);
+
+        // vkDestroyBuffer(device, stagingBuffer, nullptr);
+        // vkFreeMemory(device, stagingBufferMemory, nullptr);
     }
     void VulkanAPI::CreateIndexBuffer() {
-        VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
+        // VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
 
-        VkBuffer stagingBuffer;
-        VkDeviceMemory stagingBufferMemory;
-        CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+        // VkBuffer stagingBuffer;
+        // VkDeviceMemory stagingBufferMemory;
+        // CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
-        void* data;
-        vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
-        memcpy(data, indices.data(), (size_t) bufferSize);
-        vkUnmapMemory(device, stagingBufferMemory);
+        // void* data;
+        // vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
+        // memcpy(data, indices.data(), (size_t) bufferSize);
+        // vkUnmapMemory(device, stagingBufferMemory);
 
-        CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer, indexBufferMemory);
-        CopyBuffer(stagingBuffer, indexBuffer, bufferSize);
+        // Mesh *mesh = meshPool.GetMesh(testMesh);
 
-        vkDestroyBuffer(device, stagingBuffer, nullptr);
-        vkFreeMemory(device, stagingBufferMemory, nullptr);
+        // CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, mesh->indexBuffer.buffer, mesh->indexBuffer.memory);
+        // CopyBuffer(stagingBuffer, mesh->indexBuffer.buffer, bufferSize);
+
+        // vkDestroyBuffer(device, stagingBuffer, nullptr);
+        // vkFreeMemory(device, stagingBufferMemory, nullptr);
     }
     void VulkanAPI::CreateUniformBuffers() {
         VkDeviceSize bufferSize = sizeof(UniformBufferObject);
@@ -817,10 +881,11 @@ namespace gui {
 
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
-        VkBuffer vertexBuffers[] = {vertexBuffer};
+        VkBuffer vertexBuffers[] = { meshPool.GetMesh(testMesh)->vertexBuffer.buffer };
         VkDeviceSize offsets[] = {0};
         vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-        vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+        // vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+        vkCmdBindIndexBuffer(commandBuffer, meshPool.GetMesh(testMesh)->indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT16);
 
         vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[currentFrame], 0, nullptr);
         vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
@@ -942,11 +1007,11 @@ namespace gui {
 
         vkDestroyDescriptorPool(device, descriptorPool, nullptr);
         vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
-        vkDestroyBuffer(device, indexBuffer, nullptr);
-        vkFreeMemory(device, indexBufferMemory, nullptr);
+        // vkDestroyBuffer(device, indexBuffer, nullptr);
+        // vkFreeMemory(device, indexBufferMemory, nullptr);
 
-        vkDestroyBuffer(device, vertexBuffer, nullptr);
-        vkFreeMemory(device, vertexBufferMemory, nullptr);
+        // vkDestroyBuffer(device, vertexBuffer, nullptr);
+        // vkFreeMemory(device, vertexBufferMemory, nullptr);
 
         vkDestroyPipeline(device, graphicsPipeline, nullptr);
         vkDestroyPipelineLayout(device, pipelineLayout, nullptr);

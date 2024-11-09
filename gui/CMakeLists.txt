@@ -33,6 +33,12 @@ target_link_libraries(BiscuitGUI
     BiscuitEngine
 )
 
+# add_custom_command(
+#     TARGET BiscuitGUI
+#     PRE_BUILD
+#     COMMAND "shader\\compile_shader.bat"
+# )
+
 # copy shader files
 configure_file(${CMAKE_SOURCE_DIR}/shaders/vert.spv ${CMAKE_BINARY_DIR}/shaders/vert.spv COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/shaders/frag.spv ${CMAKE_BINARY_DIR}/shaders/frag.spv COPYONLY)
