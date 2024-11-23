@@ -108,17 +108,34 @@ namespace gui {
         std::vector<VkImageView> swapChainImageViews;
         VkRenderPass renderPass;
         VkDescriptorSetLayout descriptorSetLayout;
+
+        VkDescriptorSetLayout uniformDescriptorSetLayout;
+        VkDescriptorSetLayout textureDescriptorSetLayout;
+        
         VkPipelineLayout pipelineLayout;
         VkPipeline graphicsPipeline;
         std::vector<VkFramebuffer> swapChainFramebuffers;
         VkCommandPool commandPool;
         std::vector<VkCommandBuffer> commandBuffers;
 
-        std::vector<VkBuffer> uniformBuffers;
+        std::vector<VkBuffer> uniformBuffers;               // uniform buffer
         std::vector<VkDeviceMemory> uniformBuffersMemory;
         std::vector<void*> uniformBuffersMapped;
-        VkDescriptorPool descriptorPool;
+
+        /*
+            descriptor 분리 관련.
+            총 두개로 분리할꺼고, 하나는 유니폼, 하나는 텍스쳐
+        
+            1. descriptor Set Layout을 여러개 만듬.
+            2. 만든 layout을 묶어서 pipeline layout에 넣기.
+        */
+        VkDescriptorPool uniformDescriptorPool;
+        std::vector<VkDescriptorSet> uniformDescriptorSets;
+        
+        VkDescriptorPool descriptorPool;    // 이건 이렇게 하나만 두는게 아니라, 필요할 때 마다 만들어 써야함. (ObjectPool로 만들어야 함.)
         std::vector<VkDescriptorSet> descriptorSets;
+        
+
         VkImage textureImage;
         VkDeviceMemory textureImageMemory;
         VkImageView textureImageView;
@@ -131,7 +148,9 @@ namespace gui {
         uint32_t currentFrame = 0;
         bool framebufferResized = false;
 
-        MeshPool meshPool;
+        MeshPool    meshPool;
+        TexturePool texturePool;
+
         uint32_t testMesh;
 
         const std::vector<const char*> deviceExtensions = {

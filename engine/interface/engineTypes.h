@@ -18,6 +18,7 @@ namespace engine {
         glm::vec3 position;
         glm::vec3 rotation;
         glm::vec3 scale;
+        uint32_t meshId;    // gui가 주는 데이터.
 
         virtual void Print() const {
             printf("Model Mode: %s\n", mode.c_str());
@@ -32,25 +33,17 @@ namespace engine {
         std::vector<glm::vec3> vertices;
         std::vector<uint16_t> indices;
         std::vector<glm::vec2> uvs;
-        // gui가 주는 데이터.
-        uint32_t meshId;
 
         void Print() const override {
             IModel::Print();
             printf("Vertices: [\n");
             int i = 0;
-            for(const auto& vertex : vertices) {
-                printf("\t%d : (%.3f, %.3f, %.3f) \n", i++, vertex.x, vertex.y, vertex.z);
-            }
+            for(const auto& vertex : vertices)              printf("\t%d : (%.3f, %.3f, %.3f) \n", i++, vertex.x, vertex.y, vertex.z);
             printf("]\nIndices: [\n");
-            for(size_t i = 0; i < indices.size(); i += 3) {
-                printf("\t%zu : %u %u %u \n", i, indices[i], indices[i+1], indices[i+2]);
-            }
-            printf("]\nUVs: [\n");
+            for(size_t i = 0; i < indices.size(); i += 3)   printf("\t%zu : %u %u %u \n", i, indices[i], indices[i+1], indices[i+2]);
             i = 0;
-            for(const auto& uv : uvs) {
-                printf("\t%d : (%.3f, %.3f) \n", i++, uv.x, uv.y);
-            }
+            printf("]\nUVs: [\n");
+            for(const auto& uv : uvs)                       printf("\t%d : (%.3f, %.3f) \n", i++, uv.x, uv.y);
             printf("]\n");
         }
     } ModelData_Dynamic;
@@ -63,10 +56,11 @@ namespace engine {
     typedef struct ITexture {
         virtual ~ITexture() {};
         std::string mode;
+        uint32_t textureId; // gui가 주는 데이터.
+
         virtual void Print() const {
             printf("Texture Mode: %s\n", mode.c_str());
         }
-
     };
     typedef struct TextureData_Color : public ITexture {
         glm::vec3 color;

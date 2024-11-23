@@ -4,8 +4,8 @@ layout(location = 0) in vec2 fragTexCoord;
 
 layout(location = 0) out vec4 outColor;
 
-layout(binding = 1) uniform sampler2D texSampler;
-layout(binding = 2) uniform BoolBlock {
+layout(set = 1, binding = 0) uniform sampler2D texSampler;
+layout(set = 1, binding = 1) uniform BoolBlock {
     int useTexture;  // bool을 int로 변경
 } boolBlock;
 

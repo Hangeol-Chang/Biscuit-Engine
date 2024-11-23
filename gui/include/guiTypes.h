@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 #include <unordered_map>
 #include <queue>
+#include <memory>
 
 namespace gui {
     // vertex, index 등 버퍼에 사용
@@ -49,7 +50,7 @@ namespace gui {
         }
 
     private:
-        std::unordered_map<uint32_t, Mesh> meshs;
+        std::unordered_map<uint32_t, Mesh> meshs;   // shared_ptr로 바꿔야 함.
         uint32_t nextMeshId = 0;
 
         // Helper function to destroy a buffer
@@ -59,10 +60,32 @@ namespace gui {
         }
     };
 
+    struct ITexture {
+        int useTexture = 0;
+
+        // descriptor
+        VkDescriptorPool descriptorPool;
+        std::vector<VkDescriptorSet> descriptorSets;
+    };
+
+    struct ImageTexture : public ITexture {
+        int useTexture = 1;
+
+        VkImage textureImage;
+        VkDeviceMemory textureImageMemory;
+        VkImageView textureImageView;
+        VkSampler textureSampler;
+    };
+
+    struct ColorTexture : public ITexture {
+        int useTexture = 0;
+
+        glm::vec3 color;
+    };
 
     class TexturePool {
     public:
-        VkImageView GetTexture(uint32_t textureId) {
+        std::shared_ptr<ITexture> GetTexture(uint32_t textureId) {
             auto it = textures.find(textureId);
             if (it != textures.end()) {
                 return it->second;
@@ -70,22 +93,32 @@ namespace gui {
                 throw std::runtime_error("Texture not found");
             }
         }
-        uint32_t AddTexture(VkImageView texture) {
+        uint32_t AddTexture(ITexture& texture) {
             uint32_t newId = nextTextureId++;
-            textures[newId] = texture;
+            textures[newId] = std::make_shared<ITexture>(texture);
             return newId;
         }
         bool RemoveTexture(VkDevice device, uint32_t textureId){
             auto it = textures.find(textureId);
             if (it != textures.end()) {
-                vkDestroyImageView(device, it->second, nullptr);
+                if(it->second->useTexture == 1) {
+                    auto imageTexture = std::static_pointer_cast<ImageTexture>(it->second);
+                    vkDestroySampler(device, imageTexture->textureSampler, nullptr);
+                    vkDestroyImageView(device, imageTexture->textureImageView, nullptr);
+                    vkDestroyImage(device, imageTexture->textureImage, nullptr);
+                    vkFreeMemory(device, imageTexture->textureImageMemory, nullptr);
+                }
+                else {
+                    // color texture
+                }
+
                 textures.erase(it);
                 return true;
             }
             return false;
         }
     private:
-        std::unordered_map<uint32_t, VkImageView> textures;
+        std::unordered_map<uint32_t, std::shared_ptr<ITexture>> textures;
         uint32_t nextTextureId = 0;
     };
 
