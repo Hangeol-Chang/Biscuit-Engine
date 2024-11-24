@@ -67,6 +67,8 @@ namespace gui {
         void CreateTextureSampler();
 
         void CreateUniformBuffers();
+        void CreateBoolBlock();
+
         void CreateDescriptorPool();
         void CreateDescriptorSets();
         void CreateCommandBuffer();
@@ -135,11 +137,14 @@ namespace gui {
         VkDescriptorPool descriptorPool;    // 이건 이렇게 하나만 두는게 아니라, 필요할 때 마다 만들어 써야함. (ObjectPool로 만들어야 함.)
         std::vector<VkDescriptorSet> descriptorSets;
         
-
+        // 이거 밑에 6개 하나로 묶여야함.
+        // descriptor까지 묶어야 할 수도 있음.
         VkImage textureImage;
         VkDeviceMemory textureImageMemory;
         VkImageView textureImageView;
         VkSampler textureSampler;
+        VkBuffer boolBlockBuffer;   // -> 렌저링중에 변경되지 않으므로, 하나만 만듬.
+        VkDeviceMemory boolBlockBufferMemory;   // -> 실시간 변경을 할 게 아니어서 map을 안하는데, 후에 필요해지면 map 할 것.
 
         // imgeAvailableSemaphore는 ObjectPool화 할 것.
         std::vector<VkSemaphore> imageAvailableSemaphores;

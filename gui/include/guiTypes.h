@@ -127,7 +127,7 @@ namespace gui {
 
     struct Vertex {
         glm::vec3 pos;
-        glm::vec2 texCoord; // 나중에 이거 struct 따로 분리해야 함.
+        glm::vec2 texCoord;
 
         Vertex(glm::vec3 pos, glm::vec2 texCoord) : pos(pos), texCoord(texCoord) {}
 
@@ -174,46 +174,14 @@ namespace gui {
         */
     };
 
-    // struct Vertex2 {
-    //     glm::vec2 pos;
-    //     glm::vec3 color;
-    //     glm::vec2 texCoord; // 나중에 이거 struct 따로 분리해야 함.
-
-    //     static VkVertexInputBindingDescription getBindingDescription() {
-    //         VkVertexInputBindingDescription bindingDescription{};
-    //         bindingDescription.binding = 0;
-    //         bindingDescription.stride = sizeof(Vertex2);
-    //         bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-
-    //         return bindingDescription;
-    //     }
-
-    //     static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions() {
-    //         std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
-
-    //         attributeDescriptions[0].binding = 0;
-    //         attributeDescriptions[0].location = 0;
-    //         attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
-    //         attributeDescriptions[0].offset = offsetof(Vertex2, pos);
-
-    //         attributeDescriptions[1].binding = 0;
-    //         attributeDescriptions[1].location = 1;
-    //         attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-    //         attributeDescriptions[1].offset = offsetof(Vertex2, color);
-
-    //         attributeDescriptions[2].binding = 0;
-    //         attributeDescriptions[2].location = 2;
-    //         attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
-    //         attributeDescriptions[2].offset = offsetof(Vertex2, texCoord);
-
-    //         return attributeDescriptions;
-    //     }
-    // };
-
     struct UniformBufferObject {
         glm::mat4 model;
         glm::mat4 view;
         glm::mat4 proj;
+    };
+
+    struct BoolBlock {
+        uint32_t useTexture;    // 4바이트로 정렬해야 해서 uint16_t 쓰기 애매함.
     };
 
 

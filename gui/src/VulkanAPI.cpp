@@ -65,9 +65,11 @@ namespace gui {
         CreateGraphicsPipeline();
         CreateFramebuffers();
         CreateCommandPool();
+
         CreateTextureImage();
         CreateTextureImageView();
-        CreateTextureSampler();
+        CreateTextureSampler(); // -> descriptor분리가 완료되면, component가 가지고 있도록 해야함.
+        CreateBoolBlock();
 
         const std::vector<glm::vec3> vertices = {
             {-0.5f, -0.5f, 0.0f},
@@ -88,12 +90,9 @@ namespace gui {
         testMesh = CreateMesh(vertices, indices, uvs);
 
         CreateUniformBuffers();
-        printf("p1\n");
         CreateDescriptorPool();
-        printf("p2\n");
-
         CreateDescriptorSets();
-        printf("p3\n");
+
         CreateCommandBuffer();
         CreateSyncObjects();
     }
@@ -724,6 +723,21 @@ namespace gui {
             throw std::runtime_error("failed to create descriptor pool!");
         }
     }
+    void VulkanAPI::CreateBoolBlock() {
+        VkDeviceSize bufferSize = sizeof(BoolBlock);
+        CreateBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, boolBlockBuffer, boolBlockBufferMemory);
+
+
+        // 임시로 static하게 집어넣는 코드.
+        BoolBlock boolBlockData{};
+        boolBlockData.useTexture = 1;  // 텍스처 활성화
+        // boolBlockData.useTexture = 0;
+        void* data;
+        vkMapMemory(device, boolBlockBufferMemory, 0, sizeof(BoolBlock), 0, &data);
+        memcpy(data, &boolBlockData, sizeof(BoolBlock));
+        vkUnmapMemory(device, boolBlockBufferMemory);
+    }
+
     void VulkanAPI::CreateDescriptorPool() {    // sampler descriptor pool 생성 -> Pool에 연관되게 수정
 
         std::array<VkDescriptorPoolSize, 2> poolSizes{};
@@ -754,7 +768,6 @@ namespace gui {
         if(vkAllocateDescriptorSets(device, &allocInfo1, uniformDescriptorSets.data()) != VK_SUCCESS) {
             throw std::runtime_error("failed to allocate descriptor sets!");
         }
-        printf("p2-1\n");
 
         // 두 번째 Descriptor Set 할당
         std::vector<VkDescriptorSetLayout> textureLayouts(MAX_FRAMES_IN_FLIGHT, textureDescriptorSetLayout);
@@ -768,10 +781,9 @@ namespace gui {
         if(vkAllocateDescriptorSets(device, &allocInfo2, descriptorSets.data()) != VK_SUCCESS) {
             throw std::runtime_error("failed to allocate descriptor sets!");
         }
-        printf("p2-2\n");
         
-
         // 데이터 넣기.
+        // uniform buffer
         for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
             VkDescriptorBufferInfo bufferInfo{};
             bufferInfo.buffer = uniformBuffers[i];
@@ -790,6 +802,7 @@ namespace gui {
             vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);
         }
         
+        // texture sampler
         for(size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
             VkDescriptorImageInfo imageInfo{};
             imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -806,10 +819,10 @@ namespace gui {
             descriptorWrites[0].pImageInfo = &imageInfo;
 
 
-            VkDescriptorBufferInfo bufferInfo{};    // 작업해야함.
-            bufferInfo.buffer = nullptr;
+            VkDescriptorBufferInfo bufferInfo{};
+            bufferInfo.buffer = boolBlockBuffer;
             bufferInfo.offset = 0;
-            bufferInfo.range = sizeof(0);
+            bufferInfo.range = sizeof(BoolBlock);
 
             descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
             descriptorWrites[1].dstSet = descriptorSets[i];

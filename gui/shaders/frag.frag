@@ -10,11 +10,11 @@ layout(set = 1, binding = 1) uniform BoolBlock {
 } boolBlock;
 
 void main() {
-    outColor = texture(texSampler, fragTexCoord); 
+    // outColor = texture(texSampler, fragTexCoord); 
 
-    // if (boolBlock.useTexture == 1) {
-    //    outColor = texture(texSampler, fragTexCoord);  // 텍스처 사용
-    // } else {
-    //     outColor = vec4(1.0);  // 텍스처를 사용하지 않으면 흰색 (기본 색)
-    // }
+    if (boolBlock.useTexture == 1) {
+       outColor = texture(texSampler, fragTexCoord);  // 텍스처 사용
+    } else {
+        outColor = vec4(1.0);  // 텍스처를 사용하지 않으면 흰색 (기본 색)
+    }
 }
