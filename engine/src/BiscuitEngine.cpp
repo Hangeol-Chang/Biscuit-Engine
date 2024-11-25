@@ -14,7 +14,14 @@ namespace engine {
     void BiscuitEngine::BuildComponents() {
         printf("[ENGINE] Build Components\n");
         // 컴포넌트 빌드.
-        rootComponent = fileManager.ReadComponent("data/GUI.components.json");
+        // rootComponent = fileManager.ReadComponent("data/GUI.components.json");
+        auto rootJson = fileManager.ReadJsonFile("data/GUI.components.json");
+        auto rootComponent = builder.LoadComponents(rootJson);
+
+        printf("---------- loaded Component info ----------\n");
+        rootComponent->Print();
+        printf("-------------------------------------------\n");
+
         // behaviours 연결.
 
         // module test
@@ -25,7 +32,9 @@ namespace engine {
     }
     AppParameter BiscuitEngine::BuildAppParameter() {
         printf("[ENGINE] Build App Parameter\n");
-        return fileManager.ReadAppParameter("data/GUI.configration.json");
+
+        auto paramJson = fileManager.ReadJsonFile("data/GUI.configration.json");
+        return builder.LoadAppParameter(paramJson);
     }
 
     void BiscuitEngine::Tick() {

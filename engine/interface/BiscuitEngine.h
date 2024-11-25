@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "../include/FileManager.h"
+#include "./GUIBuilder.h"
 #include "engineTypes.h"
 
 namespace engine {
@@ -40,6 +41,7 @@ namespace engine {
         ~BiscuitEngine() = default;
 
         FileManager fileManager;
+        GUIBuilder builder;
 
         std::vector<std::function<void()>> bakeUpdateFunctions;
         std::shared_ptr<Component> rootComponent;
