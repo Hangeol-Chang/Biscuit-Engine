@@ -1,6 +1,41 @@
 {
     "components" : [
         {
+            "behaviour" : "none",
+            "name" : "Zeri_Rotator",
+            "parent" : "root",
+            "children" : [],
+
+            "model" : {
+                "mode" : "dynamic",
+                "position" : [0.0, 0.0, 0.0],
+                "rotation" : [0.0, 0.0, 0.0],
+                "scale" : [1.0, 1.0, 1.0],
+                "data" : {
+                    "vertices" : [
+                        [-0.5, -0.5, 0.0], [ 0.5, -0.5, 0.0], 
+                        [ 0.5,  0.5, 0.0], [-0.5,  0.5, 0.0]
+                    ],
+                    "indices" : [0, 1, 2, 2, 3, 0],
+                    "uvs" : [
+                        [0.0, 0.0], [1.0, 0.0], 
+                        [1.0, 1.0], [0.0, 1.0]
+                    ]
+                }   
+            },
+            "texture" : {
+                "mode" : "image",
+                "data" : {
+                    "path" : "zerri_1.png"
+                }
+            },
+            "shader" : {
+                "vertex" : "vert.spv",
+                "fragment" : "frag.spv"
+            }
+        },
+        {
+
             "behaviour" : "ThrottleBehaviour",
             "name" : "Throttle_example1",
             "parent" : "root",

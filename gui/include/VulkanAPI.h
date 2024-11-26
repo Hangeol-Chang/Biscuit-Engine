@@ -124,6 +124,9 @@ namespace gui {
         std::vector<VkDeviceMemory> uniformBuffersMemory;
         std::vector<void*> uniformBuffersMapped;
 
+        VkBuffer appInfoBuffer;     // 해상도, 기타 필요 정보들을 vertex Shader에 넣기 위한 uniform buffer
+        VkDeviceMemory appInfoBufferMemory; // 이게 bind 1로 가야함.
+
         /*
             descriptor 분리 관련.
             총 두개로 분리할꺼고, 하나는 유니폼, 하나는 텍스쳐
