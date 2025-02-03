@@ -972,14 +972,6 @@ namespace gui {
         return false;
     }
 
-    void VulkanAPI::MainLoop() {    // legacy
-        while (!glfwWindowShouldClose(window)) {            
-            glfwPollEvents();
-            DrawFrame();
-        }
-        vkDeviceWaitIdle(device);
-    }
-
     void VulkanAPI::DrawFrame(std::shared_ptr<engine::Component> rootComponent) {
         vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
         uint32_t imageIndex;

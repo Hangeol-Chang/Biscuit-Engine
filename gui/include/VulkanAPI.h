@@ -82,7 +82,6 @@ namespace gui {
         void DrawFrame(std::shared_ptr<engine::Component> rootComponent);
         void UpdateUniformBuffer(uint32_t currentImage);
 
-        void MainLoop();
         void CleanupSwapChain();
 
         // common functions
