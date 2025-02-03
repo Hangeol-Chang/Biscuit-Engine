@@ -35,10 +35,15 @@ namespace engine {
         // Compoenent를 만드는 함수.
         void BuildComponents();
         AppParameter BuildAppParameter();
+        
+        std::shared_ptr<engine::Component> GetRootComponent() { return rootComponent; }
 
     private :
         BiscuitEngine() = default;
         ~BiscuitEngine() = default;
+        
+        // load된 component를 저장해둠.
+        std::shared_ptr<engine::Component> rootComponent;
 
         FileManager fileManager;
         GUIBuilder builder;

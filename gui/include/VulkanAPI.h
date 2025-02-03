@@ -35,7 +35,7 @@ namespace gui {
         // 외부에서 호출할 key 함수들.
         void InitWindow();
         void InitVulkan();
-        bool Tick();
+        bool Tick(std::shared_ptr<engine::Component> rootComponent);
         void Cleanup();
 
         // 외부에서 호출할 setting 함수들.
@@ -79,7 +79,7 @@ namespace gui {
 
         // running logic
         void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
-        void DrawFrame();
+        void DrawFrame(std::shared_ptr<engine::Component> rootComponent);
         void UpdateUniformBuffer(uint32_t currentImage);
 
         void MainLoop();

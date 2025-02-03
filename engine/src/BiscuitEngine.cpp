@@ -16,7 +16,7 @@ namespace engine {
         // 컴포넌트 빌드.
         // rootComponent = fileManager.ReadComponent("data/GUI.components.json");
         auto rootJson = fileManager.ReadJsonFile("data/GUI.components.json");
-        auto rootComponent = builder.LoadComponents(rootJson);
+        rootComponent = builder.LoadComponents(rootJson);
 
         printf("---------- loaded Component info ----------\n");
         rootComponent->Print();

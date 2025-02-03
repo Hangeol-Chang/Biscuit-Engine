@@ -26,7 +26,9 @@ namespace gui {
                 auto startFrame = std::chrono::steady_clock::now();
 
                 biscuitEngine.Tick();
-                if(!api.Tick()) { break; };
+                if(!api.Tick(biscuitEngine.GetRootComponent())) { 
+                    break; 
+                }                
 
                 auto endFrame = std::chrono::steady_clock::now();
                 auto frameDuration = std::chrono::duration_cast<std::chrono::milliseconds>(endFrame - startFrame);

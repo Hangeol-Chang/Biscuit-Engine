@@ -961,10 +961,11 @@ namespace gui {
         }
     }
 
-    bool VulkanAPI::Tick() {
+    // TODO
+    bool VulkanAPI::Tick(std::shared_ptr<engine::Component> rootComponent) {
         if(!glfwWindowShouldClose(window)) {
             glfwPollEvents();
-            DrawFrame();
+            DrawFrame(rootComponent);
             return true;
         }
         vkDeviceWaitIdle(device);
@@ -979,7 +980,7 @@ namespace gui {
         vkDeviceWaitIdle(device);
     }
 
-    void VulkanAPI::DrawFrame() {
+    void VulkanAPI::DrawFrame(std::shared_ptr<engine::Component> rootComponent) {
         vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
         uint32_t imageIndex;
         VkResult result = vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
@@ -992,7 +993,11 @@ namespace gui {
         vkResetFences(device, 1, &inFlightFences[currentFrame]);
 
         vkResetCommandBuffer(commandBuffers[currentFrame], 0);
+
+        // for문으로 잡고 모든 Component에 대해 순회해야 함. (Updata를 하는 Component만)
         RecordCommandBuffer(commandBuffers[currentFrame], imageIndex);
+
+        // 카메라 업데이트
         UpdateUniformBuffer(currentFrame);
 
         VkSubmitInfo submitInfo{};

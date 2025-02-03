@@ -49,7 +49,7 @@ namespace engine {
     } ModelData_Dynamic;
 
     typedef struct ModelData_Static : public IModel {
-        std::string modelFile;
+        std::string modelFile;  // 3d 관련. 추후 작업 필요.
     } ModelData_Static;
 
     ///////////////// about texture /////////////////
