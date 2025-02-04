@@ -6,8 +6,9 @@ namespace engine {
     std::map<size_t, std::shared_ptr<BakeBehaviour>> BakeBehaviour::behaviours;
 
     // static functions
-    std::shared_ptr<BakeBehaviour> BakeBehaviour::FindBehaviour(std::string *name) {
-        auto b = behaviours.find(hashStr(*name));
+    std::shared_ptr<BakeBehaviour> BakeBehaviour::FindBehaviour(std::string *name, std::string *behaviourName) {
+        std::string fullName = *name + *behaviourName;
+        auto b = behaviours.find(hashStr(fullName));
         if(b != behaviours.end()) { return b->second; }
         return nullptr;
     }
@@ -27,14 +28,17 @@ namespace engine {
     void BakeBehaviour::RegistBehaviour(const std::string& name, std::function<std::shared_ptr<BakeBehaviour>()> creator) {
         GetRegistry()[name] = creator;
     }
-    std::shared_ptr<BakeBehaviour> BakeBehaviour::CreateInstance(const std::string& name) {
-        auto it = GetRegistry().find(name);
+    std::shared_ptr<BakeBehaviour> BakeBehaviour::CreateInstance(const std::string& name, const std::string& behaviourName) {
+        auto it = GetRegistry().find(behaviourName);
         printf("size of registry %d\n", GetRegistry().size());
 
         if (it != GetRegistry().end()) { 
-            printf("find behaviour %s\n", name.c_str());
+            printf("find behaviour %s\n", behaviourName.c_str());
             auto instance = it->second();
-            behaviours.insert({hashStr(name), instance});
+
+            // name + behaviourName으로 hashcode 생성.
+            std::string fullName = name + behaviourName;
+            behaviours.insert({hashStr(fullName), instance});
             return instance; 
         }
         printf("not found behaviour %s\n", name.c_str());

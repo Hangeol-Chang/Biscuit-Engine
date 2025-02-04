@@ -55,7 +55,7 @@ namespace engine {
         // 컴포넌트 이름과 행동 설정
         auto component = std::make_shared<Component>(componentData["name"].asString());
         component->behaviourName = componentData["behaviour"].asString();
-        component->behaviour = BakeBehaviour::CreateInstance(component->behaviourName);
+        component->behaviour = BakeBehaviour::CreateInstance(component->GetName(), component->behaviourName);
         if(component->behaviour != nullptr) {
             component->behaviour->SetComponent(component);
         }

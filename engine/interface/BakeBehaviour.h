@@ -54,12 +54,12 @@ namespace engine {
         // 어떤 behaviour들이 있는지 저장해두는 곳.
         static std::map<std::string, std::function<std::shared_ptr<BakeBehaviour>()>>& GetRegistry();
         static void RegistBehaviour(const std::string& name, std::function<std::shared_ptr<BakeBehaviour>()> creator);
-        static std::shared_ptr<BakeBehaviour> CreateInstance(const std::string& name);
+        static std::shared_ptr<BakeBehaviour> CreateInstance(const std::string& name, const std::string& behaviourName);
         static void RegistUpdates();    // 이거 구조 좀 다시 생각해볼 것.
 
         std::string name;
     protected:
-        static std::shared_ptr<BakeBehaviour> FindBehaviour(std::string *name);
+        static std::shared_ptr<BakeBehaviour> FindBehaviour(std::string *name, std::string *behaviourName);
         static std::map<size_t, std::shared_ptr<BakeBehaviour>> behaviours; // hashcode, BakeBehaviour
         std::shared_ptr<Component> component;
 
