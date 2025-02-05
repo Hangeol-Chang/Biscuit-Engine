@@ -50,7 +50,7 @@ namespace gui {
         }
 
     private:
-        std::unordered_map<uint32_t, Mesh> meshs;   // shared_ptr로 바꿔야 함.
+        std::unordered_map<uint32_t, Mesh> meshs;
         uint32_t nextMeshId = 0;
 
         // Helper function to destroy a buffer

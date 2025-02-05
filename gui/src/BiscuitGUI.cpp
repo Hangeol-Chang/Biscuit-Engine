@@ -8,7 +8,7 @@ namespace gui {
         printf("[GUI] Application constructor\n");
         appParameter = biscuitEngine.BuildAppParameter();
 
-        biscuitEngine.Initialize();
+        biscuitEngine.Initialize();     // gui 파일 읽어옴.
     }
     BiscuitGUI::~BiscuitGUI() {
         printf("[GUI] Application destructor\n");
@@ -21,6 +21,9 @@ namespace gui {
 
             api.InitWindow();
             api.InitVulkan();
+
+            // build된 Components를 이용해서 Vertex, Index buffer를 만드는 작업을 해야 함.
+            auto rootComponent = biscuitEngine.GetRootComponent();
 
             while(true) {
                 auto startFrame = std::chrono::steady_clock::now();
