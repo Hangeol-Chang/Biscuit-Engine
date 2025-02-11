@@ -25,6 +25,12 @@ const int MAX_FRAMES_IN_FLIGHT = 2;
 namespace gui {
 
     class VulkanAPI {
+        // drawFrame <--> presentFrame 사이에 데이터를 주고 받기 위한 구조체.
+        struct FrameInfo {
+            std::vector<VkSemaphore> renderFinishedSemaphore;
+            uint32_t imageIndex;
+        };
+
     public:
         VulkanAPI();
         ~VulkanAPI() {};
@@ -41,8 +47,11 @@ namespace gui {
         // -- external initialize --
         void CreateMeshs(std::shared_ptr<engine::Component> components);
 
-        // 외부에서 호출할 setting 함수들.
         uint32_t CreateMesh(std::vector<glm::vec3> vertices, std::vector<uint16_t> indices, std::vector<glm::vec2> uvs);
+        uint32_t CreateTexture(std::string texturePath);
+        uint32_t CreateTexture(glm::vec3 color);    // color texture
+        uint32_t CreateTexture(std::vector<uint8_t> textureData, int width, int height);    // 추후에 구현할 것. image Buffer 받아다가 만드는 함수.
+
         void UpdateMeshVertices(uint32_t meshId, std::vector<glm::vec3> vertices);
         void UpdateMeshIndices(uint32_t meshId, std::vector<uint32_t> indices);
         void UpdateMeshUVs(uint32_t meshId, std::vector<glm::vec2> uvs);
@@ -82,9 +91,12 @@ namespace gui {
         void RecreateSwapChain();
 
         // running logic
-        void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
-        void DrawFrame(std::shared_ptr<engine::Component> rootComponent);
+        void RecordCommandBuffer(VkCommandBuffer commandBuffer, std::shared_ptr<engine::Component> rootComponent,  uint32_t imageIndex);
+        FrameInfo DrawFrame(std::shared_ptr<engine::Component> rootComponent);
+        void PresentFrame(FrameInfo frameInfo);
         void UpdateUniformBuffer(uint32_t currentImage);
+
+        void DrawMesh(VkCommandBuffer commandBuffer, std::shared_ptr<engine::Component> rootComponent);
 
         void CleanupSwapChain();
 

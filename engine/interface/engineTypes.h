@@ -55,7 +55,7 @@ namespace engine {
     ///////////////// about texture /////////////////
     typedef struct ITexture {
         virtual ~ITexture() {};
-        std::string mode;
+        std::string mode;   // color, image
         uint32_t textureId; // gui가 주는 데이터.
 
         virtual void Print() const {

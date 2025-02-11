@@ -72,24 +72,6 @@ namespace gui {
         CreateTextureSampler(); // -> descriptor분리가 완료되면, component가 가지고 있도록 해야함.
         CreateBoolBlock();
 
-        const std::vector<glm::vec3> vertices = {
-            {-0.5f, -0.5f, 0.0f},
-            { 0.5f, -0.5f, 0.0f}, 
-            { 0.5f,  0.5f, 0.0f}, 
-            {-0.5f,  0.5f, 0.0f}
-        };
-        const std::vector<glm::vec2> uvs = {
-            {0.0f, 0.0f},
-            {1.0f, 0.0f},
-            {1.0f, 1.0f},
-            {0.0f, 1.0f}
-        };
-        const std::vector<uint16_t> indices = {
-            0, 1, 2, 2, 3, 0
-        };
-
-        testMesh = CreateMesh(vertices, indices, uvs);
-
         CreateUniformBuffers();
         CreateDescriptorPool();
         CreateDescriptorSets();
@@ -415,7 +397,9 @@ namespace gui {
 
         VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
         inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-        inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+        // inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;          // 점 
+        // inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;           // 라인 
+        inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;       // 면 
         inputAssembly.primitiveRestartEnable = VK_FALSE;
 
         // viewport, scissor setting
@@ -584,7 +568,7 @@ namespace gui {
         }
     }
     void VulkanAPI::CreateTextureImage() {
-        int texWidth, texHeight, texChannels;
+        int texWidth, texHeight, texChannels;        
         stbi_uc* pixels = stbi_load("public/zerri_1.png", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
         VkDeviceSize imageSize = texWidth * texHeight * 4;
 
@@ -661,6 +645,41 @@ namespace gui {
         mesh.indexCount = static_cast<uint32_t>(indices.size());
 
         return meshPool.AddMesh(mesh);
+    }
+
+    uint32_t VulkanAPI::CreateTexture(std::string texturePath) {
+        int texWidth, texHeight, texChannels;
+        stbi_uc* pixels = stbi_load(("public/" + texturePath).c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+        VkDeviceSize imageSize = texWidth * texHeight * 4;
+
+        if (!pixels) {
+            throw std::runtime_error("failed to load texture image! path : " + texturePath);
+        }
+        VkBuffer stagingBuffer;
+        VkDeviceMemory stagingBufferMemory;
+
+        CreateBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+        void* data;
+        vkMapMemory(device, stagingBufferMemory, 0, imageSize, 0, &data);
+        memcpy(data, pixels, static_cast<size_t>(imageSize));
+        vkUnmapMemory(device, stagingBufferMemory);
+
+        stbi_image_free(pixels);
+        
+        Texture texture = Texture();
+        
+        CreateImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, texture.image, texture.imageMemory);
+        TransitionImageLayout(texture.image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+        CopyBufferToImage(stagingBuffer, texture.image, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
+        TransitionImageLayout(texture.image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        
+        vkDestroyBuffer(device, stagingBuffer, nullptr);
+        vkFreeMemory(device, stagingBufferMemory, nullptr);
+
+        texture.imageView = CreateImageView(texture.image, VK_FORMAT_R8G8B8A8_SRGB);
+        texture.sampler = textureSampler;
+
+        return texturePool.AddTexture(texture);
     }
  
     template<typename T>
@@ -892,18 +911,27 @@ namespace gui {
     // -- external initialize --
     void VulkanAPI::CreateMeshs(std::shared_ptr<engine::Component> components) {
         // positoin / rotation 어떻게 할지 생각해봐야함.
-        auto model = components->GetModel();
-        printf("create model -> name: %s || mode: %s\n", components->name.c_str(), model->mode.c_str());
-        if(model->mode == "static") {
+        // printf("create model -> name: %s || mode: %s\n", components->name.c_str(), model->mode.c_str());
+        if(components->GetModel()->mode == "static") {
             // 처리해야 함.
         }
-        else if(model->mode == "dynamic") {
-            std::shared_ptr<engine::ModelData_Dynamic> model_d = std::dynamic_pointer_cast<engine::ModelData_Dynamic>(model);
+        else if(components->GetModel()->mode == "dynamic") {
+            std::shared_ptr<engine::ModelData_Dynamic> model = std::dynamic_pointer_cast<engine::ModelData_Dynamic>(components->GetModel());
                 
-            model_d->meshId = CreateMesh(model_d->vertices, model_d->indices, model_d->uvs);
-            printf("create model mesh -> name: %s || meshId: %d\n", components->name.c_str(), model_d->meshId);
+            model->meshId = CreateMesh(model->vertices, model->indices, model->uvs);
+            printf("create model mesh -> name: %s || meshId: %d\n", components->name.c_str(), model->meshId);
         }
 
+        // texture 생성
+        if(components->GetTexture()->mode == "color") {
+            // 처리해야 함.
+        }
+        else if(components->GetTexture()->mode == "image") {
+            std::shared_ptr<engine::TextureData_Image> texture = std::dynamic_pointer_cast<engine::TextureData_Image>(components->GetTexture());
+            texture->textureId = CreateTexture(texture->imageFile);
+            printf("create texture -> name: %s || textureId: %d\n", components->name.c_str(), texture->textureId);
+        }
+        
         // 모든 자식둘애 대해 메쉬 생성 루프.
         for(auto children : components->children) {
             CreateMeshs(children.second);   
@@ -911,7 +939,7 @@ namespace gui {
     }
 
     // running logic
-    void  VulkanAPI::RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex) {
+    void  VulkanAPI::RecordCommandBuffer(VkCommandBuffer commandBuffer, std::shared_ptr<engine::Component> rootComponent, uint32_t imageIndex) {
         VkCommandBufferBeginInfo beginInfo{};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
         beginInfo.flags = 0; // Optional
@@ -952,34 +980,44 @@ namespace gui {
 
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
-        std::shared_ptr<Mesh> mesh = meshPool.GetMesh(testMesh);
-
-        VkBuffer vertexBuffers[] = { mesh->vertexBuffer.buffer };
-        VkDeviceSize offsets[] = {0};
-        vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-        // vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
-        vkCmdBindIndexBuffer(commandBuffer, mesh->indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT16);
-
-        // uniform buffer -> 추후 카메라로 활용.
-        // 여기에 유니폼만 넣을 것.
-        // vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[currentFrame], 0, nullptr);
-        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 
-            0, 1, &uniformDescriptorSets[currentFrame], 0, nullptr
-        );
-        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 
-            1, 1, &descriptorSets[currentFrame], 0, nullptr
-        );
-
-        // texture 바인딩 필요.
-        // vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &descriptorSets[currentFrame], 0, nullptr);
-        // vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, 1, &descriptorSets[currentFrame], 0, nullptr);
-
-        // 드로우 호출 (인덱스 카운트를 사용)
-        vkCmdDrawIndexed(commandBuffer, mesh->indexCount, 1, 0, 0, 0);
-
+        // mesh rendering
+        DrawMesh(commandBuffer, rootComponent);
+        
         vkCmdEndRenderPass(commandBuffer);
         if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
             throw std::runtime_error("failed to record command buffer!");
+        }
+    }
+
+    void VulkanAPI::DrawMesh(VkCommandBuffer commandBuffer, std::shared_ptr<engine::Component> rootComponent) {
+        for(auto componentIter : rootComponent->children) {
+            auto component = componentIter.second;
+            if(component->GetModel()->mode == "static") {
+                // 처리해야 함.
+            }
+            else if(component->GetModel()->mode == "dynamic") {
+                auto model = std::dynamic_pointer_cast<engine::ModelData_Dynamic>(component->GetModel());
+                auto meshId = model->meshId;
+                auto mesh = meshPool.GetMesh(meshId);
+
+                VkBuffer vertexBuffers[] = { mesh->vertexBuffer.buffer };
+                VkDeviceSize offsets[] = {0};
+                vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+                vkCmdBindIndexBuffer(commandBuffer, mesh->indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT16);
+
+                // 각 mesh 에 대해 camera 설정.
+                vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 
+                    0, 1, &uniformDescriptorSets[currentFrame], 0, nullptr
+                );
+                vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 
+                    1, 1, &descriptorSets[currentFrame], 0, nullptr
+                );
+
+                vkCmdDrawIndexed(commandBuffer, mesh->indexCount, 1, 0, 0, 0);
+            }
+            
+            // 자식들에 대해서 다시 draw 호출
+            DrawMesh(commandBuffer, component);
         }
     }
 
@@ -987,23 +1025,23 @@ namespace gui {
     bool VulkanAPI::Tick(std::shared_ptr<engine::Component> rootComponent) {
         if(!glfwWindowShouldClose(window)) {
             glfwPollEvents();
-            DrawFrame(rootComponent);
+            auto frameInfo = DrawFrame(rootComponent);  // draw    frame
+            PresentFrame(frameInfo);                    // present frame
 
-            // present 명령 분리해서 여기에 놓을 것.
-            // PresentFrame();
             return true;
         }
         vkDeviceWaitIdle(device);
         return false;
     }
 
-    void VulkanAPI::DrawFrame(std::shared_ptr<engine::Component> rootComponent) {
+    VulkanAPI::FrameInfo VulkanAPI::DrawFrame(std::shared_ptr<engine::Component> rootComponent) {
         vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
-        uint32_t imageIndex;
-        VkResult result = vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+        FrameInfo frameInfo;
+        VkResult result = vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &frameInfo.imageIndex);
         if(result == VK_ERROR_OUT_OF_DATE_KHR) {
             RecreateSwapChain();
-            return;
+            frameInfo.imageIndex = -1;
+            return frameInfo;
         } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
             throw std::runtime_error("failed to acquire swap chain image!");
         }
@@ -1012,7 +1050,7 @@ namespace gui {
         vkResetCommandBuffer(commandBuffers[currentFrame], 0);
 
         // for문으로 잡고 모든 Component에 대해 순회해야 함. (Updata를 하는 Component만)
-        RecordCommandBuffer(commandBuffers[currentFrame], imageIndex);
+        RecordCommandBuffer(commandBuffers[currentFrame], rootComponent, frameInfo.imageIndex);
 
         // 카메라 업데이트
         UpdateUniformBuffer(currentFrame);
@@ -1027,39 +1065,44 @@ namespace gui {
         submitInfo.pWaitDstStageMask = waitStages;
 
         submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = &commandBuffers[currentFrame];
+        submitInfo.pCommandBuffers = &commandBuffers[currentFrame]; // <- draw Call 수 만큼 command buffer 만들어서 넣을 것.
 
-        VkSemaphore signalSemaphores[] = {renderFinishedSemaphores[currentFrame]};
+        std::vector<VkSemaphore> signalSemaphores = {renderFinishedSemaphores[currentFrame]};
         submitInfo.signalSemaphoreCount = 1;
-        submitInfo.pSignalSemaphores = signalSemaphores;
+        submitInfo.pSignalSemaphores = signalSemaphores.data();
 
         if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS) {
             throw std::runtime_error("failed to submit draw command buffer!");
         }   
 
+        currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+
+        frameInfo.renderFinishedSemaphore = signalSemaphores;
+        return frameInfo;
+    }
+
+    void VulkanAPI::PresentFrame(FrameInfo frameInfo) {
         VkPresentInfoKHR presentInfo{};
         presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 
         presentInfo.waitSemaphoreCount = 1;
-        presentInfo.pWaitSemaphores = signalSemaphores;
-
+        presentInfo.pWaitSemaphores = frameInfo.renderFinishedSemaphore.data();
 
         VkSwapchainKHR swapChains[] = {swapChain};
         presentInfo.swapchainCount = 1;
         presentInfo.pSwapchains = swapChains;
-        presentInfo.pImageIndices = &imageIndex;
+        presentInfo.pImageIndices = &frameInfo.imageIndex;
         presentInfo.pResults = nullptr; // Optional
 
-        result = vkQueuePresentKHR(presentQueue, &presentInfo);
+        VkResult result = vkQueuePresentKHR(presentQueue, &presentInfo);
         if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || framebufferResized) {
             framebufferResized = false;
             RecreateSwapChain();
         } else if (result != VK_SUCCESS) {
             throw std::runtime_error("failed to present swap chain image!");
         }
-
-        currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
     }
+
     void VulkanAPI::UpdateUniformBuffer(uint32_t currentImage) {
         static auto startTime = std::chrono::high_resolution_clock::now();
 
@@ -1087,6 +1130,10 @@ namespace gui {
             vkFreeMemory(device, uniformBuffersMemory[i], nullptr);
         }
 
+        // cleanup mesh/texture
+        meshPool.Cleanup(device);
+        texturePool.Cleanup(device);
+        
         vkDestroySampler(device, textureSampler, nullptr);
         vkDestroyImageView(device, textureImageView, nullptr);
         vkDestroyImage(device, textureImage, nullptr);
