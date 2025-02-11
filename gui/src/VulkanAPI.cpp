@@ -52,6 +52,7 @@ namespace gui {
         // guiParameter.resizable = parameter.resizable;
     }
 
+    // -- vulkan api initialize --
     void VulkanAPI::InitVulkan() {
         CreateInstance();
         SetupDebugMessenger();
@@ -888,6 +889,27 @@ namespace gui {
         CreateFramebuffers();
     }
 
+    // -- external initialize --
+    void VulkanAPI::CreateMeshs(std::shared_ptr<engine::Component> components) {
+        // positoin / rotation 어떻게 할지 생각해봐야함.
+        auto model = components->GetModel();
+        printf("create model -> name: %s || mode: %s\n", components->name.c_str(), model->mode.c_str());
+        if(model->mode == "static") {
+            // 처리해야 함.
+        }
+        else if(model->mode == "dynamic") {
+            std::shared_ptr<engine::ModelData_Dynamic> model_d = std::dynamic_pointer_cast<engine::ModelData_Dynamic>(model);
+                
+            model_d->meshId = CreateMesh(model_d->vertices, model_d->indices, model_d->uvs);
+            printf("create model mesh -> name: %s || meshId: %d\n", components->name.c_str(), model_d->meshId);
+        }
+
+        // 모든 자식둘애 대해 메쉬 생성 루프.
+        for(auto children : components->children) {
+            CreateMeshs(children.second);   
+        }
+    }
+
     // running logic
     void  VulkanAPI::RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex) {
         VkCommandBufferBeginInfo beginInfo{};
@@ -930,7 +952,7 @@ namespace gui {
 
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
-        Mesh *mesh = meshPool.GetMesh(testMesh);
+        std::shared_ptr<Mesh> mesh = meshPool.GetMesh(testMesh);
 
         VkBuffer vertexBuffers[] = { mesh->vertexBuffer.buffer };
         VkDeviceSize offsets[] = {0};
@@ -966,6 +988,9 @@ namespace gui {
         if(!glfwWindowShouldClose(window)) {
             glfwPollEvents();
             DrawFrame(rootComponent);
+
+            // present 명령 분리해서 여기에 놓을 것.
+            // PresentFrame();
             return true;
         }
         vkDeviceWaitIdle(device);

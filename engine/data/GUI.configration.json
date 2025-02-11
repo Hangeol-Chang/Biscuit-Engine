@@ -3,6 +3,7 @@
         "title" : "Example GUI",
         "width" : 1280,
         "height" : 720,
+        "framerate" : 60,
         "fullscreen" : false,
         "resizeable" : false
     },

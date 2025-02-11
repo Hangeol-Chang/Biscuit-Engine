@@ -5,6 +5,6 @@ namespace engine {
         printf("[ThrottleBehaviour] Awake\n");
     }
     void ThrottleBehaviour::Update() {
-        printf("[ThrottleBehaviour] Update\n");
+        // printf("[ThrottleBehaviour] Update\n");
     }
 }

@@ -5,6 +5,6 @@ namespace engine {
         printf("[TBT3dArrowBehaviour] Awake\n");
     }
     void TBT3dArrowBehaviour::Update() {
-        printf("[TBT3dArrowBehaviour] Update\n");
+        // printf("[TBT3dArrowBehaviour] Update\n");
     }
 }

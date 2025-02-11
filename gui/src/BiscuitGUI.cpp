@@ -25,6 +25,9 @@ namespace gui {
             // build된 Components를 이용해서 Vertex, Index buffer를 만드는 작업을 해야 함.
             auto rootComponent = biscuitEngine.GetRootComponent();
 
+            api.CreateMeshs(rootComponent);
+            // 여기 작업하면 됨.
+
             while(true) {
                 auto startFrame = std::chrono::steady_clock::now();
 

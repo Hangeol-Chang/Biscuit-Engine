@@ -24,20 +24,22 @@ namespace gui {
 
     class MeshPool {
     public:
-        Mesh *GetMesh(uint32_t bufferId) {
+        std::shared_ptr<Mesh> GetMesh(uint32_t bufferId) {
             auto it = meshs.find(bufferId);
             if (it != meshs.end()) {
-                return &it->second;
+                return std::shared_ptr<Mesh>(&it->second, [](Mesh*) {});
             } else {
                 throw std::runtime_error("Mesh not found");
             }
         }
+    
         uint32_t AddMesh(const Mesh& mesh) {
             uint32_t newId = nextMeshId++;
             meshs[newId] = mesh;
             return newId;
         }
-        bool RemoveMesh(VkDevice device, uint32_t bufferId){
+    
+        bool RemoveMesh(VkDevice device, uint32_t bufferId) {
             auto it = meshs.find(bufferId);
             if (it != meshs.end()) {
                 // Free memory and destroy buffers if necessary
@@ -48,11 +50,11 @@ namespace gui {
             }
             return false;
         }
-
+    
     private:
         std::unordered_map<uint32_t, Mesh> meshs;
         uint32_t nextMeshId = 0;
-
+    
         // Helper function to destroy a buffer
         void DestroyBuffer(VkDevice device, Buffer& buffer) {
             vkDestroyBuffer(device, buffer.buffer, nullptr);

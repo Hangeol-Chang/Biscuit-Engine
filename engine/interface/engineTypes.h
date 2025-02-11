@@ -14,7 +14,7 @@ namespace engine {
     ///////////////// about model /////////////////
     typedef struct IModel {
         virtual ~IModel() {};
-        std::string mode;
+        std::string mode;   // dynamic, static
         glm::vec3 position;
         glm::vec3 rotation;
         glm::vec3 scale;

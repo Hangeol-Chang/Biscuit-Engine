@@ -38,6 +38,9 @@ namespace gui {
         bool Tick(std::shared_ptr<engine::Component> rootComponent);
         void Cleanup();
 
+        // -- external initialize --
+        void CreateMeshs(std::shared_ptr<engine::Component> components);
+
         // 외부에서 호출할 setting 함수들.
         uint32_t CreateMesh(std::vector<glm::vec3> vertices, std::vector<uint16_t> indices, std::vector<glm::vec2> uvs);
         void UpdateMeshVertices(uint32_t meshId, std::vector<glm::vec3> vertices);
@@ -50,6 +53,7 @@ namespace gui {
         Buffer CreateBuffer(std::vector<T> rawData); 
 
         // initialize logic
+        // -- vulkan api initialize --
         void CreateInstance();
         void CreateSurface();
         void PickPhysicalDevice();

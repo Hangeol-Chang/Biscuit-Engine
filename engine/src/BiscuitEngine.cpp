@@ -25,8 +25,8 @@ namespace engine {
         // behaviours 연결.
 
         // module test
-        auto debugger = BakeBehaviour::CreateInstance("debugger", "EngineDebugger");
-        auto aa = BakeBehaviour::CreateInstance("throttleTest", "ThrottleBehaviour");
+        // auto debugger = BakeBehaviour::CreateInstance("debugger", "EngineDebugger");
+        // auto aa = BakeBehaviour::CreateInstance("throttleTest", "ThrottleBehaviour");
 
         BakeBehaviour::RegistUpdates();
     }
