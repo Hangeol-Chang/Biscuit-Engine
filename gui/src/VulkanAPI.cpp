@@ -431,7 +431,18 @@ namespace gui {
         rasterizer.rasterizerDiscardEnable = VK_FALSE;
         rasterizer.polygonMode = VK_POLYGON_MODE_FILL;          // POLYGON mode
         rasterizer.lineWidth = 1.0f;
-        rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+        /*
+            CULL_MODE
+                - VK_CULL_MODE_NONE : 어느 쪽도 cull하지 않음 -> 전부 보여짐
+                - VK_CULL_MODE_FRONT_BIT : front face를 cull
+                - VK_CULL_MODE_BACK_BIT : back face를 cull
+                - VK_CULL_MODE_FRONT_AND_BACK : 모든 face를 cull
+            FRONT_FACE
+                - VK_FRONT_FACE_COUNTER_CLOCKWISE : counter clockwise 방향이 front face
+                - VK_FRONT_FACE_CLOCKWISE : clockwise 방향이 front face]
+        */
+        rasterizer.cullMode = VK_CULL_MODE_FRONT_BIT;
+        // rasterizer.cullMode = VK_CULL_MODE_NONE;
         // rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
         rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
         rasterizer.depthBiasEnable = VK_FALSE;
