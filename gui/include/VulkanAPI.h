@@ -69,6 +69,8 @@ namespace gui {
         void CreateLogicalDevice();
         void CreateSwapChain();
         void CreateImageViews();
+        void CreateDepthImage();
+        void CreateDepthImageView();
         void CreateRenderPass();
         void CreateDescriptorSetLayout();
         void CreateGraphicsPipeline();
@@ -109,7 +111,7 @@ namespace gui {
         void EndSingleTimeCommands(VkCommandBuffer commandBuffer);
 
         void CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
-        VkImageView CreateImageView(VkImage image, VkFormat format);
+        VkImageView CreateImageView(VkImage image, VkFormat format, VkImageAspectFlagBits aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT);
 
         GLFWwindow* window;
         VkInstance instance;
@@ -123,6 +125,11 @@ namespace gui {
         VkFormat swapChainImageFormat;
         VkExtent2D swapChainExtent;
         std::vector<VkImageView> swapChainImageViews;
+
+        std::vector<VkImage> depthImages;
+        std::vector<VkDeviceMemory> depthImageMemories;
+        std::vector<VkImageView> depthImageViews;
+
         VkRenderPass renderPass;
         VkDescriptorSetLayout descriptorSetLayout;
 

@@ -23,6 +23,9 @@ namespace gui {
         VkShaderModule CreateShaderModule(const std::vector<char>& code, VkDevice device);
         uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties, VkPhysicalDevice physicalDevice);
         void printBufferData(VkDevice device, Buffer buffer);
+
+        VkFormat FindSupportedFormat(VkPhysicalDevice physicalDevice, const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+        VkFormat FindDepthFormat(VkPhysicalDevice physicalDevice);
     }
 
     namespace debugger {

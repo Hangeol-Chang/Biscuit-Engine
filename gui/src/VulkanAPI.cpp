@@ -59,8 +59,10 @@ namespace gui {
         CreateSurface();
         PickPhysicalDevice();
         CreateLogicalDevice();
-        CreateSwapChain();
+        CreateSwapChain();  // swapChain Image
         CreateImageViews();
+        CreateDepthImage(); // depth Image
+
         CreateRenderPass();
         CreateDescriptorSetLayout();
         CreateGraphicsPipeline();
@@ -262,7 +264,26 @@ namespace gui {
             swapChainImageViews[i] = CreateImageView(swapChainImages[i], swapChainImageFormat);
         }
     }
+    void VulkanAPI::CreateDepthImage() {
+        depthImages.resize(swapChainImages.size());
+        depthImageMemories.resize(swapChainImages.size());
+        depthImageViews.resize(swapChainImages.size());
+
+        VkFormat depthFormat = helper::FindDepthFormat(physicalDevice);
+
+        for (size_t i = 0; i < swapChainImages.size(); i++) {
+            CreateImage(swapChainExtent.width, swapChainExtent.height, 
+                        depthFormat, VK_IMAGE_TILING_OPTIMAL, 
+                        VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 
+                        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
+                        depthImages[i], depthImageMemories[i]);
+
+            depthImageViews[i] = CreateImageView(depthImages[i], depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+        }
+    }
     void VulkanAPI::CreateRenderPass() {
+
+        // 색상 처리기
         VkAttachmentDescription colorAttachment{};
         colorAttachment.format = swapChainImageFormat;
         colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -276,14 +297,34 @@ namespace gui {
         colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
         colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
+        // 깊이 처리기
+        VkAttachmentDescription depthAttachment{};
+        depthAttachment.format = helper::FindDepthFormat(physicalDevice);
+        depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+
+        depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+        depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+
+        depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+        depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+
+        depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+        // refs
         VkAttachmentReference colorAttachmentRef{};
         colorAttachmentRef.attachment = 0;
         colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+        VkAttachmentReference depthAttachmentRef{};
+        depthAttachmentRef.attachment = 1;  // depth의 index
+        depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
         VkSubpassDescription subpass{};
         subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
         subpass.colorAttachmentCount = 1;
         subpass.pColorAttachments = &colorAttachmentRef;
+        subpass.pDepthStencilAttachment = &depthAttachmentRef;
 
         VkSubpassDependency dependency{};
         dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
@@ -294,10 +335,11 @@ namespace gui {
         dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
         dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
+        std::vector<VkAttachmentDescription> attachments = {colorAttachment, depthAttachment};
         VkRenderPassCreateInfo renderPassInfo{};
         renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-        renderPassInfo.attachmentCount = 1;
-        renderPassInfo.pAttachments = &colorAttachment;
+        renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+        renderPassInfo.pAttachments = attachments.data();
         renderPassInfo.subpassCount = 1;
         renderPassInfo.pSubpasses = &subpass;
 
@@ -441,8 +483,8 @@ namespace gui {
                 - VK_FRONT_FACE_COUNTER_CLOCKWISE : counter clockwise 방향이 front face
                 - VK_FRONT_FACE_CLOCKWISE : clockwise 방향이 front face]
         */
-        rasterizer.cullMode = VK_CULL_MODE_FRONT_BIT;
-        // rasterizer.cullMode = VK_CULL_MODE_NONE;
+        // rasterizer.cullMode = VK_CULL_MODE_FRONT_BIT;
+        rasterizer.cullMode = VK_CULL_MODE_NONE;
         // rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
         rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
         rasterizer.depthBiasEnable = VK_FALSE;
@@ -501,6 +543,13 @@ namespace gui {
         colorBlending.blendConstants[2] = 0.0f; // Optional
         colorBlending.blendConstants[3] = 0.0f; // Optional
 
+        VkPipelineDepthStencilStateCreateInfo depthStencil{};
+        depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+        depthStencil.depthTestEnable = VK_TRUE;
+        depthStencil.depthWriteEnable = VK_TRUE;
+        depthStencil.depthCompareOp = VK_COMPARE_OP_LESS; 
+        depthStencil.depthBoundsTestEnable = VK_FALSE;
+        depthStencil.stencilTestEnable = VK_FALSE;
 
         ///////// pipeline layout
         VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
@@ -525,7 +574,7 @@ namespace gui {
         pipelineInfo.pViewportState =           &viewportState;
         pipelineInfo.pRasterizationState =      &rasterizer;
         pipelineInfo.pMultisampleState =        &multisampling;
-        pipelineInfo.pDepthStencilState =       nullptr;
+        pipelineInfo.pDepthStencilState =       &depthStencil;
         pipelineInfo.pColorBlendState =         &colorBlending;
         pipelineInfo.pDynamicState =            &dynamicState;
 
@@ -548,15 +597,16 @@ namespace gui {
 
     
         for (size_t i = 0; i < swapChainImageViews.size(); i++) {
-            VkImageView attachments[] = {
-                swapChainImageViews[i]
+            std::array<VkImageView, 2> attachments = {
+                swapChainImageViews[i],
+                depthImageViews[i]
             };
 
             VkFramebufferCreateInfo framebufferInfo{};
             framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
             framebufferInfo.renderPass = renderPass;
-            framebufferInfo.attachmentCount = 1;
-            framebufferInfo.pAttachments = attachments;
+            framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+            framebufferInfo.pAttachments = attachments.data();
             framebufferInfo.width = swapChainExtent.width;
             framebufferInfo.height = swapChainExtent.height;
             framebufferInfo.layers = 1;
@@ -916,6 +966,8 @@ namespace gui {
 
         CreateSwapChain();
         CreateImageViews();
+        CreateDepthImage();
+
         CreateFramebuffers();
     }
 
@@ -967,9 +1019,11 @@ namespace gui {
         renderPassInfo.renderArea.offset = {0, 0};
         renderPassInfo.renderArea.extent = swapChainExtent;
 
-        VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
-        renderPassInfo.clearValueCount = 1;
-        renderPassInfo.pClearValues = &clearColor;
+        VkClearValue clearValues[2];
+        clearValues[0].color = {0.0f, 0.0f, 0.0f, 1.0f};
+        clearValues[1].depthStencil = {1.0f, 0};
+        renderPassInfo.clearValueCount = 2;
+        renderPassInfo.pClearValues = clearValues;
         
         vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
@@ -1368,13 +1422,13 @@ namespace gui {
 
         EndSingleTimeCommands(commandBuffer);
     }
-    VkImageView VulkanAPI::CreateImageView(VkImage image, VkFormat format) {
+    VkImageView VulkanAPI::CreateImageView(VkImage image, VkFormat format, VkImageAspectFlagBits aspectFlags) {
         VkImageViewCreateInfo viewInfo{};
         viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
         viewInfo.image = image;
         viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
         viewInfo.format = format;
-        viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        viewInfo.subresourceRange.aspectMask = aspectFlags;
         viewInfo.subresourceRange.baseMipLevel = 0;
         viewInfo.subresourceRange.levelCount = 1;
         viewInfo.subresourceRange.baseArrayLayer = 0;
