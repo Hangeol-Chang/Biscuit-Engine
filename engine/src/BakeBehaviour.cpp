@@ -1,6 +1,8 @@
 #include "../interface/BakeBehaviour.h"
 #include "../common/StringHelper.h"
 
+#include <cstring>
+
 namespace engine {
     // static variables init
     std::map<size_t, std::shared_ptr<BakeBehaviour>> BakeBehaviour::behaviours;
@@ -104,7 +106,7 @@ namespace engine {
                 dynamicModel->vertices.resize(newVertices.size());
             }
 
-            std::memcpy(dynamicModel->vertices.data(), newVertices.data(), sizeof(glm::vec3) * newVertices.size());
+            memcpy(dynamicModel->vertices.data(), newVertices.data(), sizeof(glm::vec3) * newVertices.size());
         } else {
             printf("[%s][Error] IModel is not of type ModelData_Dynamic\n", name.c_str());
         }
@@ -116,7 +118,7 @@ namespace engine {
                 dynamicModel->indices.resize(newIndices.size());
             }
 
-            std::memcpy(dynamicModel->indices.data(), newIndices.data(), sizeof(uint32_t) * newIndices.size());
+            memcpy(dynamicModel->indices.data(), newIndices.data(), sizeof(uint32_t) * newIndices.size());
         } else {
             printf("[%s][Error] IModel is not of type ModelData_Dynamic\n", name.c_str());
         }
@@ -128,7 +130,7 @@ namespace engine {
                 dynamicModel->uvs.resize(newUVs.size());
             }
 
-            std::memcpy(dynamicModel->uvs.data(), newUVs.data(), sizeof(glm::vec2) * newUVs.size());
+            memcpy(dynamicModel->uvs.data(), newUVs.data(), sizeof(glm::vec2) * newUVs.size());
         } else {
             printf("[%s][Error] IModel is not of type ModelData_Dynamic\n", name.c_str());
         }
